@@ -1,0 +1,29 @@
+{
+  "name": "nfd-client",
+  "description": "nearForm deployer command line client",
+  "keywords": [
+    "nearForm",
+    "deployer",
+    "command",
+    "line",
+    "client"
+  ],
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "Peter Elger (http://nearform.com/)",
+  "contributors": [
+    "Peter Elger <elger.peter@gmail.com> (http://peterelger.com/)"
+  ],
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "optimist": "~0.6.1"
+  },
+  "main": "lib/main",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pelger/nfd-client.git"
+  },
+  "devDependencies": {}
+}
