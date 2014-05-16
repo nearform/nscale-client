@@ -1,0 +1,15 @@
+{
+  "name": "docsrv",
+  "type": "docker",
+  "specific": {
+    "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+    "targetName": "docsrv",
+    "buildScript": "builddoc.sh",
+    "deployScript": "none",
+    "outputDir": "none",
+    "fish": "fish",
+    "path": "startupdeathclock",
+    "repositoryToken": "3fcbb74de630e0a0f7ed12f0a55890f1a5af5fc4"
+  },
+  "id": "b9e81e64-9782-4490-851d-cd29f8365866"
+}
