@@ -30,7 +30,7 @@
         "buildScript": "builddoc.sh",
         "outputDir": "none",
         "deployScript": "none",
-        "arguments": "-p 9002:9002 -d 10.75.23.138:5000/doc-srv /usr/bin/node /srv/doc-srv",
+        "arguments": "-p 9002:9002 -d __REPOSITORY__:5000/__TARGETNAME__-__REVISIONNUMBER__ /usr/bin/node /srv/doc-srv",
         "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
       },
       "id": "222409de-150d-42fb-8151-da6b08fa7ce7"
@@ -45,7 +45,7 @@
         "buildScript": "buildhist.sh",
         "outputDir": "none",
         "deployScript": "none",
-        "arguments": "-p 9000:9000 -d 10.75.23.138:5000/hist-srv /usr/bin/node /srv/hist-srv",
+        "arguments": "-p 9000:9000 -d __REPOSITORY__:5000/__TARGETNAME__-__REVISIONNUMBER__ /usr/bin/node /srv/hist-srv",
         "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
       },
       "id": "c8498581-f932-4ebb-997c-09e9f101f14c"
@@ -60,7 +60,7 @@
         "buildScript": "buildreal.sh",
         "outputDir": "none",
         "deployScript": "none",
-        "arguments": "-p 9001:9001 -d 10.75.23.138:5000/real-srv /usr/bin/node /srv/real-srv",
+        "arguments": "-p 9001:9001 -d __REPOSITORY__:5000/__TARGETNAME__-__REVISIONNUMBER__ /usr/bin/node /srv/real-srv",
         "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
       },
       "id": "5b15176f-0e44-4cf1-be1a-a3de756c2343"
@@ -75,7 +75,7 @@
         "buildScript": "buildweb.sh",
         "outputDir": "none",
         "deployScript": "none",
-        "arguments": "-e WEB_HOST=10.75.29.243 -p 8000:8000 -d 10.75.23.138:5000/web sh /web/run.sh",
+        "arguments": "-e WEB_HOST=10.75.29.243 -p 8000:8000 -d __REPOSITORY__:5000/__TARGETNAME__-__REVISIONNUMBER__ sh /web/run.sh",
         "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
       },
       "id": "8cb5b916-8bd1-4ecf-8825-585c1a2678aa"
