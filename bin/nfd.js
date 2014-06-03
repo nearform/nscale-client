@@ -1,14 +1,6 @@
 #!/usr/bin/env node
 /* 
- * command line interface for dynamodb
- *
- * supports the following operations
- *
- * list       - list all tables in this dynamo instance
- * describe   - describe the named table
- * query      - run a query on the specified table and return the results limited to 20 elements
- *              into the node repl
- * throughput - adjust the table throughput to the given value
+ * command line interface for nfd
  *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED 
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 

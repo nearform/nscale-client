@@ -1,6 +1,6 @@
 {
-  "name": "nfd-client",
-  "description": "nearForm deployer command line client",
+  "name": "nearform-cli",
+  "description": "nearForm command line client",
   "keywords": [
     "nearForm",
     "deployer",
@@ -19,10 +19,14 @@
   },
   "dependencies": {
     "cli-table": "^0.3.0",
+    "prompt": "^0.2.13",
     "underscore": "^1.6.0",
     "yargs": "^1.2.2"
   },
-  "main": "lib/main",
+  "main": "./lib/main",
+  "bin": {
+    "nfd": "./bin/nfd.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/pelger/nfd-client.git"
