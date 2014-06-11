@@ -1,7 +1,7 @@
 {
   "_id": "5377a79577113d4e58bbab01",
-  "sshKeyPath": "",
-  "name": "sudc",
+  "sshKeyPath": "/home/ubuntu/nfd.pem",
+  "name": "Startup-Death-Clock",
   "namespace": "sudc",
   "id": "270a799f-9d00-4a23-a268-b75abb109dc6",
   "containerDefinitions": [
