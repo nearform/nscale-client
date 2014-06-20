@@ -1,0 +1,577 @@
+{
+  "_id": "5377a79577113d4e58222222",
+  "name": "Travel",
+  "namespace": "Travel",
+  "id": "12345678-9d00-4a23-a268-b75abb109dc6",
+  "containerDefinitions": [
+    {
+      "name": "ELB",
+      "type": "aws-elb",
+      "specific": {
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "54d7ec46-1c78-463d-b1c9-da5e86cfd76b"
+    },
+    {
+      "name": "Machine",
+      "type": "aws-ami",
+      "specific": {
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "94cf3228-636f-4985-84fc-64bf3af3e295"
+    },
+    {
+      "name": "nginx",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "targetName": "nginx",
+        "path": "startupdeathclock",
+        "buildScript": "builddoc.sh",
+        "outputDir": "none",
+        "deployScript": "none",
+        "arguments": "-p 9002:9002 -d __REPOSITORY__:5000/__TARGETNAME__-__REVISIONNUMBER__ /usr/bin/node /srv/doc-srv",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "08cfaf2d-4ba8-4f3b-a665-4d942c69200f"
+    },
+    {
+      "name": "web",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "targetName": "web",
+        "path": "startupdeathclock",
+        "buildScript": "buildhist.sh",
+        "outputDir": "none",
+        "deployScript": "none",
+        "arguments": "-p 9000:9000 -d __REPOSITORY__:5000/__TARGETNAME__-__REVISIONNUMBER__ /usr/bin/node /srv/hist-srv",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "be4947ca-fbcb-4332-924a-9af0e06bb375"
+    },
+    {
+      "name": "Kafka",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "targetName": "kafka",
+        "path": "startupdeathclock",
+        "buildScript": "buildreal.sh",
+        "outputDir": "none",
+        "deployScript": "none",
+        "arguments": "-p 9001:9001 -d __REPOSITORY__:5000/__TARGETNAME__-__REVISIONNUMBER__ /usr/bin/node /srv/real-srv",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "0ceb67d2-b0b1-4c30-b328-340189f2a4bf"
+    },
+    {
+      "name": "zookeeper",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "targetName": "zookeeper",
+        "path": "startupdeathclock",
+        "buildScript": "buildweb.sh",
+        "outputDir": "none",
+        "deployScript": "none",
+        "arguments": "-e WEB_HOST=10.75.29.243 -p 8000:8000 -d __REPOSITORY__:5000/__TARGETNAME__-__REVISIONNUMBER__ sh /web/run.sh",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "3f1c9fa9-4f69-4897-b254-abdd49795496"
+    },
+    {
+      "name": "redis",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "targetName": "redis",
+        "path": "startupdeathclock",
+        "buildScript": "buildweb.sh",
+        "outputDir": "none",
+        "deployScript": "none",
+        "arguments": "-e WEB_HOST=10.75.29.243 -p 8000:8000 -d __REPOSITORY__:5000/__TARGETNAME__-__REVISIONNUMBER__ sh /web/run.sh",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "5e42d7f0-057e-4c6b-899b-36b711ffb5e0"
+    },
+    {
+      "name": "audit-collect",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "284b2fd7-9ab4-4de0-93e8-9dfd0456a9f0"
+    },
+    {
+      "name": "booking-search",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "695529c9-43a5-4b02-b0cc-28378de4a34d"
+    },
+    {
+      "name": "audit-query",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "d5285cc3-d4ff-47b8-8857-d4b3fae7f2db"
+    },
+    {
+      "name": "booking-search",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "0bc1d15e-996e-4751-887c-ef620ad87c52"
+    },
+    {
+      "name": "coms-sms",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "9411886e-5510-4d75-b94c-6a1040d5d9ad"
+    },
+    {
+      "name": "coms-email",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "9965d882-eb9e-456e-8e64-ffe052d92a28"
+    },
+    {
+      "name": "consumer-query",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "ca0ab6ca-7816-4ca0-8556-de1cfcbfeda5"
+    },
+    {
+      "name": "consumer-account",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "61a1c810-8ba8-499b-bf86-fb5d53a65e65"
+    },
+    {
+      "name": "flight-price",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "9800d691-7212-406a-a8ea-a60df9d9c8dc"
+    },
+    {
+      "name": "lofare-book",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "87cc4755-8459-4e32-bac9-001ac1fe2f22"
+    },
+    {
+      "name": "lofare-manage",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "d090823d-506b-4824-bde9-c05e737609de"
+    },
+    {
+      "name": "lofare-query",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "cb356693-6b14-4152-95e5-d8f536c5fa26"
+    },
+    {
+      "name": "lofare-search",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "e2096073-dd2c-4d98-81d9-59f06188930d"
+    },
+    {
+      "name": "pay-process",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "080d50b0-d660-4435-b17c-c70806978879"
+    },
+    {
+      "name": "tracking-collect",
+      "type": "docker",
+      "specific": {
+        "repositoryUrl": "git@github.com:pelger/startupdeathclock.git",
+        "repositoryToken": "04551b154404a852e663aba4c3fa299e04f6e8a5"
+      },
+      "id": "ad30e2fa-f4b9-458f-b56c-ce84c1fb60d6"
+    }
+  ],
+  "topology": {
+    "containers": {
+      "10": {
+        "id": "10",
+        "containerDefinitionId": "54d7ec46-1c78-463d-b1c9-da5e86cfd76b",
+        "containedBy": "10",
+        "contains": [
+          "20",
+          "21"
+        ]
+      },
+      "20": {
+        "id": "20",
+        "containerDefinitionId": "94cf3228-636f-4985-84fc-64bf3af3e295",
+        "containedBy": "10",
+        "contains": [
+          "30",
+          "31",
+          "32"
+        ],
+        "specific": {
+          "ipaddress": "10.74.143.152"
+        }
+      },
+      "21": {
+        "id": "21",
+        "containerDefinitionId": "94cf3228-636f-4985-84fc-64bf3af3e295",
+        "containedBy": "10",
+        "contains": [
+          "33",
+          "34",
+          "35"
+        ],
+        "specific": {
+          "ipaddress": "10.75.29.243"
+        }
+      },
+      "30": {
+        "id": "30",
+        "containerDefinitionId": "08cfaf2d-4ba8-4f3b-a665-4d942c69200f",
+        "containedBy": "20",
+        "contains": [],
+        "specific": {
+          "imageId": "b0852b59-472a-4f0d-92ca-98239ca979a6"
+        }
+      },
+      "31": {
+        "id": "31",
+        "containerDefinitionId": "be4947ca-fbcb-4332-924a-9af0e06bb375",
+        "containedBy": "20",
+        "contains": [],
+        "specific": {
+          "imageId": "f0590f1a-ffa8-4fe7-a9eb-0bd5f3c26499"
+        }
+      },
+      "32": {
+        "id": "32",
+        "containerDefinitionId": "be4947ca-fbcb-4332-924a-9af0e06bb375",
+        "containedBy": "20",
+        "contains": [],
+        "specific": {
+          "imageId": "39813781-dadb-4f5c-8346-43056501f0c2"
+        }
+      },
+      "33": {
+        "id": "33",
+        "containerDefinitionId": "08cfaf2d-4ba8-4f3b-a665-4d942c69200f",
+        "containedBy": "21",
+        "contains": [],
+        "specific": {
+          "imageId": "4b6f7019-e65f-4974-a44f-6ef1163d9a60"
+        }
+      },
+      "34": {
+        "id": "34",
+        "containerDefinitionId": "be4947ca-fbcb-4332-924a-9af0e06bb375",
+        "containedBy": "21",
+        "contains": [],
+        "specific": {
+          "imageId": "10838961-e7b7-4010-b893-3893b0f16c1b"
+        }
+      },
+      "35": {
+        "id": "35",
+        "containerDefinitionId": "be4947ca-fbcb-4332-924a-9af0e06bb375",
+        "containedBy": "21",
+        "contains": [],
+        "specific": {
+          "imageId": "bcdaf5dc-5836-4fe3-b65e-79ef6226d1fb"
+        }
+      },
+      "40": {
+        "id": "40",
+        "containerDefinitionId": "94cf3228-636f-4985-84fc-64bf3af3e295",
+        "containedBy": "40",
+        "contains": [
+          "50"
+        ],
+        "specific": {
+          "ipaddress": "10.74.143.152"
+        }
+      },
+      "41": {
+        "id": "41",
+        "containerDefinitionId": "94cf3228-636f-4985-84fc-64bf3af3e295",
+        "containedBy": "41",
+        "contains": [
+          "51"
+        ],
+        "specific": {
+          "ipaddress": "10.74.143.152"
+        }
+      },
+      "50": {
+        "id": "50",
+        "containerDefinitionId": "0ceb67d2-b0b1-4c30-b328-340189f2a4bf",
+        "containedBy": "40",
+        "contains": [],
+        "specific": {
+          "imageId": "8241e967-c469-4892-bbd3-b855817a8d4f"
+        }
+      },
+      "51": {
+        "id": "51",
+        "containerDefinitionId": "0ceb67d2-b0b1-4c30-b328-340189f2a4bf",
+        "containedBy": "41",
+        "contains": [],
+        "specific": {
+          "imageId": "ec2c6870-41e4-454f-bb30-c1f4c5e8e4ff"
+        }
+      },
+      "60": {
+        "id": "60",
+        "containerDefinitionId": "94cf3228-636f-4985-84fc-64bf3af3e295",
+        "containedBy": "60",
+        "contains": [
+          "70"
+        ],
+        "specific": {
+          "ipaddress": "10.74.143.152"
+        }
+      },
+      "61": {
+        "id": "61",
+        "containerDefinitionId": "94cf3228-636f-4985-84fc-64bf3af3e295",
+        "containedBy": "61",
+        "contains": [
+          "71"
+        ],
+        "specific": {
+          "ipaddress": "10.74.143.152"
+        }
+      },
+      "70": {
+        "id": "70",
+        "containerDefinitionId": "3f1c9fa9-4f69-4897-b254-abdd49795496",
+        "containedBy": "60",
+        "contains": [],
+        "specific": {
+          "imageId": "c854cd32-3a7a-4110-8e2c-54c5792cecaa"
+        }
+      },
+      "71": {
+        "id": "71",
+        "containerDefinitionId": "3f1c9fa9-4f69-4897-b254-abdd49795496",
+        "containedBy": "61",
+        "contains": [],
+        "specific": {
+          "imageId": "230b4fae-b57e-49bb-bd17-115f8ce6079d"
+        }
+      },
+      "100": {
+        "id": "100",
+        "containerDefinitionId": "94cf3228-636f-4985-84fc-64bf3af3e295",
+        "containedBy": "100",
+        "contains": [
+          "110",
+          "111",
+          "112",
+          "113",
+          "114",
+          "115",
+          "116"
+        ],
+        "specific": {
+          "ipaddress": "10.74.143.152"
+        }
+      },
+      "101": {
+        "id": "101",
+        "containerDefinitionId": "94cf3228-636f-4985-84fc-64bf3af3e295",
+        "containedBy": "101",
+        "contains": [
+          "120",
+          "121",
+          "122",
+          "123",
+          "124",
+          "125",
+          "126",
+          "127"
+        ],
+        "specific": {
+          "ipaddress": "10.74.143.152"
+        }
+      },
+      "110": {
+        "id": "110",
+        "containerDefinitionId": "ad30e2fa-f4b9-458f-b56c-ce84c1fb60d6",
+        "containedBy": "100",
+        "contains": [],
+        "specific": {
+          "imageId": "751753f6-c169-42bf-945d-eedcf06d943b"
+        }
+      },
+      "111": {
+        "id": "111",
+        "containerDefinitionId": "080d50b0-d660-4435-b17c-c70806978879",
+        "containedBy": "100",
+        "contains": [],
+        "specific": {
+          "imageId": "9bdbb8be-b524-49bb-98d7-2d2e533130ef"
+        }
+      },
+      "112": {
+        "id": "112",
+        "containerDefinitionId": "e2096073-dd2c-4d98-81d9-59f06188930d",
+        "containedBy": "100",
+        "contains": [],
+        "specific": {
+          "imageId": "5387c787-2279-4bd9-af46-6496ef81e007"
+        }
+      },
+      "113": {
+        "id": "113",
+        "containerDefinitionId": "cb356693-6b14-4152-95e5-d8f536c5fa26",
+        "containedBy": "100",
+        "contains": [],
+        "specific": {
+          "imageId": "64ec0aeb-e537-4e90-818d-988ccdc74d28"
+        }
+      },
+      "114": {
+        "id": "114",
+        "containerDefinitionId": "d090823d-506b-4824-bde9-c05e737609de",
+        "containedBy": "100",
+        "contains": [],
+        "specific": {
+          "imageId": "0d788968-f8dc-47a1-9495-a8feecac6060"
+        }
+      },
+      "115": {
+        "id": "115",
+        "containerDefinitionId": "87cc4755-8459-4e32-bac9-001ac1fe2f22",
+        "containedBy": "100",
+        "contains": [],
+        "specific": {
+          "imageId": "3a0339ab-397e-4221-823f-8f90100d5a06"
+        }
+      },
+      "116": {
+        "id": "116",
+        "containerDefinitionId": "9800d691-7212-406a-a8ea-a60df9d9c8dc",
+        "containedBy": "100",
+        "contains": [],
+        "specific": {
+          "imageId": "6628f16f-2903-436c-8288-12a7a0f569a5"
+        }
+      },
+      "120": {
+        "id": "120",
+        "containerDefinitionId": "61a1c810-8ba8-499b-bf86-fb5d53a65e65",
+        "containedBy": "101",
+        "contains": [],
+        "specific": {
+          "imageId": "f1b2f1a8-5e73-4233-b829-b46e015855ef"
+        }
+      },
+      "121": {
+        "id": "121",
+        "containerDefinitionId": "ca0ab6ca-7816-4ca0-8556-de1cfcbfeda5",
+        "containedBy": "101",
+        "contains": [],
+        "specific": {
+          "imageId": "f7197254-fdd7-4c74-a4f0-6397c2efe10f"
+        }
+      },
+      "122": {
+        "id": "122",
+        "containerDefinitionId": "9965d882-eb9e-456e-8e64-ffe052d92a28",
+        "containedBy": "101",
+        "contains": [],
+        "specific": {
+          "imageId": "f8cc7e9c-5908-4360-b475-acbaea2f99a9"
+        }
+      },
+      "123": {
+        "id": "123",
+        "containerDefinitionId": "9411886e-5510-4d75-b94c-6a1040d5d9ad",
+        "containedBy": "101",
+        "contains": [],
+        "specific": {
+          "imageId": "7c2b3087-b2ec-4f8b-aa3d-7748644c7423"
+        }
+      },
+      "124": {
+        "id": "124",
+        "containerDefinitionId": "0bc1d15e-996e-4751-887c-ef620ad87c52",
+        "containedBy": "101",
+        "contains": [],
+        "specific": {
+          "imageId": "3f5be214-e81a-453f-a818-be90320e5241"
+        }
+      },
+      "125": {
+        "id": "125",
+        "containerDefinitionId": "d5285cc3-d4ff-47b8-8857-d4b3fae7f2db",
+        "containedBy": "101",
+        "contains": [],
+        "specific": {
+          "imageId": "a0ab6457-baa9-457c-9791-e07ef9bba5f1"
+        }
+      },
+      "126": {
+        "id": "126",
+        "containerDefinitionId": "695529c9-43a5-4b02-b0cc-28378de4a34d",
+        "containedBy": "101",
+        "contains": [],
+        "specific": {
+          "imageId": "dab2b333-53e1-4a9a-9c2d-686bd04604ad"
+        }
+      },
+      "127": {
+        "id": "127",
+        "containerDefinitionId": "284b2fd7-9ab4-4de0-93e8-9dfd0456a9f0",
+        "containedBy": "101",
+        "contains": [],
+        "specific": {
+          "imageId": "6633758a-7010-44ca-b24a-da46ab4e0a32"
+        }
+      }
+    }
+  }
+}
