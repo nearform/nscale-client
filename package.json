@@ -23,7 +23,8 @@
     "lodash": "^2.4.1",
     "progress": "^1.1.5",
     "prompt": "^0.2.13",
-    "yargs": "^1.2.2"
+    "yargs": "^1.2.2",
+    "nfd-sdk": "git+ssh://git@github.com:nearform/nfd-sdk.git"
   },
   "main": "./lib/main",
   "bin": {
