@@ -17,6 +17,5 @@
 
 'use strict';
 
-var main = require('../lib/main');
-main.main();
+require('../lib/main')(process.argv.slice(2));
 
