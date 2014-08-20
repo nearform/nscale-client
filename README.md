@@ -177,3 +177,52 @@ To build a container of a system execute `nfd container build`:
     Example:
     $ nfd container build nfd-demo web
 
+## Revision
+
+A revision is a recorded system snapshot, automatically saved whenever there are system changes.
+
+### revision list
+
+To list all revisions of a system execute `nfd revision list`:
+
+    Usage: nfd revision list NAME
+
+    Example:
+    $ nfd revision list nfd-demo
+
+### revision get
+
+To get a revision of a system execute `nfd revision get`:
+
+    Usage: nfd revision get NAME REVISION
+
+    Example:
+    $ nfd revision get nfd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
+
+### revision deploy
+
+To deploy a revision of a system execute `nfd revision deploy`:
+
+    Usage: nfd revision deploy NAME REVISION
+
+    Example:
+    $ nfd revision deploy nfd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
+
+### revision mark
+
+To mark a revision of a system as being deployed execute `nfd revision mark`:
+
+    Usage: nfd revision mark NAME REVISION
+
+    Example:
+    $ nfd revision mark nfd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
+
+### revision preview
+
+To preview the deploy workflow for a revision of a system execute `nfd revision preview`:
+
+    Usage: nfd revision preview NAME REVISION
+
+    Example:
+    $ nfd revision preview nfd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
+
