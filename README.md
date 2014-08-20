@@ -226,3 +226,20 @@ To preview the deploy workflow for a revision of a system execute `nfd revision 
     Example:
     $ nfd revision preview nfd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
 
+## remote add
+
+To add a remote git repository to an existing system execute 'remote add':
+
+    Usage: nfd remote add NAME REPO
+
+    Example:
+    $ nfd remote add nfd-demo git@github.com:nearform/nfd-demo
+
+## timeline list
+
+To get the system timeline execute 'timeline list':
+
+    Usage: nfd timeline list NAME
+
+    Example:
+    $ nfd timeline list nfd-demo
