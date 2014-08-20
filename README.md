@@ -48,7 +48,7 @@ To logout from the nfd host execute `nfd logout`:
 
 ## system
 
-A nfd system is represented by a set of containers that are configured, built and deployed to constitute a working platform for distributed applications.
+A nfd system is represented by a set of connected containers that are configured, built and deployed to constitute a working platform for distributed applications.
 
 ### system create
 
@@ -125,11 +125,55 @@ To run and verify an analysis of a system execute `nfd system check`:
     Example:
     $ nfd system check nfd-demo
 
+## container
 
+A container is a reusable and configurable system resource that can be built and deployed across one or more physical nodes.
 
+The currently supported container types are docker (Docker container), aws-ami (Amazon machine image), aws-sg (Amazon security group), and aws-elb (Amazon load balancer).
 
+### container list
 
+To list all containers of a system execute `nfd container list`:
 
+    Usage: nfd container list NAME
 
+    Example:
+    $ nfd container list nfd-demo
 
+### container add
+
+To add a container to a system execute `nfd container add`:
+
+    Usage: nfd container add NAME
+
+    Example:
+    $ nfd container add nfd-demo
+    prompt: type: docker
+
+### container put
+
+To update a container with a new revision execute `nfd container put`:
+
+    Usage: nfd container put < FILE
+
+    Example:
+    $ nfd container put < container.json
+
+### container delete
+
+To delete a container from a system execute `nfd container delete`:
+
+    Usage: nfd container delete NAME CONTAINER
+
+    Example:
+    $ nfd container delete nfd-demo web
+
+### container build
+
+To build a container of a system execute `nfd container build`:
+
+    Usage: nfd container build NAME CONTAINER
+
+    Example:
+    $ nfd container build nfd-demo web
 
