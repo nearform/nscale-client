@@ -9,6 +9,8 @@ To list available commands execute `nfd help`:
 
 The nfd host is the server running the nfd system.
 
+To set the ndf host execute `nfd use`:
+
     Usage: nfd use HOST [PORT]
 
     Example:
