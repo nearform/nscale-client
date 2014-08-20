@@ -11,7 +11,7 @@ To list available commands execute `nfd help`:
 
     The nfd host is the server running the nfd system.
 
-		Example:
+    Example:
     $ nfd use localhost 3223
 
 ## login
@@ -27,7 +27,7 @@ To list available commands execute `nfd help`:
     prompt: password: <password>
 
     To login with your github account:
-    First generate a new github personal access token in https://github.com/settings/applications, remembering to select the 'repo' and 'user' scopes.
+    First generate a new github personal access token in [https://github.com/settings/applications](https://github.com/settings/applications), remembering to select the 'repo' and 'user' scopes.
     $ nfd login
     prompt: nfd username / password login (y/n): n
     prompt: github access token: <personal access token>
@@ -38,6 +38,6 @@ To list available commands execute `nfd help`:
 
     Logout from the nfd host.
 
-		Example:
+    Example:
     $ nfd logout
 
