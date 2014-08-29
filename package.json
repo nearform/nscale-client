@@ -1,18 +1,20 @@
 {
-  "name": "nearform-cli",
-  "description": "nearForm command line client",
+  "name": "nscale-client",
+  "description": "nearForm's nscale command line client",
   "keywords": [
     "nearForm",
+    "nscale",
     "deployer",
     "command",
     "line",
     "client"
   ],
   "version": "0.0.1",
-  "license": "MIT",
+  "license": "Artistic License 2.0",
   "author": "Peter Elger (http://nearform.com/)",
   "contributors": [
-    "Peter Elger <elger.peter@gmail.com> (http://peterelger.com/)"
+    "Peter Elger <elger.peter@gmail.com> (http://peterelger.com/)",
+    "Matteo Collina <matteo.collina@nearform.com>"
   ],
   "engines": {
     "node": "*"
@@ -22,17 +24,18 @@
     "cli-table": "^0.3.0",
     "commist": "^0.2.0",
     "lodash": "^2.4.1",
-    "nfd-sdk": "git+ssh://git@github.com:nearform/nfd-sdk.git#v0.0.5",
+    "nscale-sdk": "~0.1.0",
     "progress": "^1.1.5",
     "prompt": "^0.2.13"
   },
   "main": "./lib/main",
   "bin": {
-    "nfd": "./bin/nfd.js"
+    "nsd": "./bin/nsd.js",
+    "nscale": "./bin/nsd.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pelger/nfd-client.git"
+    "url": "https://github.com/nearform/nscale-client.git"
   },
   "devDependencies": {}
 }

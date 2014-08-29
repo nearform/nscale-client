@@ -1,31 +1,34 @@
+nscale-client
+=============
+
 
 # Command Line
 
-To list available commands execute `nfd help`:
+To list available commands execute `nsd help`:
 
-    $ nfd help
+    $ nsd help
 
-## nfd host
+## nsd host
 
-The nfd host is the server running the nfd system.
+The nsd host is the server running the nsd system.
 
-To set the ndf host execute `nfd use`:
+To set the ndf host execute `nsd use`:
 
-    Usage: nfd use HOST [PORT]
+    Usage: nsd use HOST [PORT]
 
     Example:
-    $ nfd use localhost 3223
+    $ nsd use localhost 3223
 
 ## login
 
-To authenticate with the nfd host execute `nfd login` and either login by username/password or with your github account.
+To authenticate with the nsd host execute `nsd login` and either login by username/password or with your github account.
 
-    Usage: nfd login
+    Usage: nsd login
 
 ### username/password login
 
-    $ nfd login
-    prompt: nfd username / password login (y/n): y
+    $ nsd login
+    prompt: nsd username / password login (y/n): y
     prompt: username: <username>
     prompt: password: <password>
 
@@ -33,97 +36,97 @@ To authenticate with the nfd host execute `nfd login` and either login by userna
 
 First generate a new github personal access token in [https://github.com/settings/applications](https://github.com/settings/applications), remembering to select the 'repo' and 'user' scopes.
 
-    $ nfd login
-    prompt: nfd username / password login (y/n): n
+    $ nsd login
+    prompt: nsd username / password login (y/n): n
     prompt: github access token: <personal access token>
 
 ## logout
 
-To logout from the nfd host execute `nfd logout`:
+To logout from the nsd host execute `nsd logout`:
 
-    Usage: nfd logout
+    Usage: nsd logout
 
     Example:
-    $ nfd logout
+    $ nsd logout
 
 ## system
 
-A nfd system is represented by a set of connected containers that are configured, built and deployed to constitute a working platform for distributed applications.
+A nsd system is represented by a set of connected containers that are configured, built and deployed to constitute a working platform for distributed applications.
 
 ### system create
 
-To create a blank system execute `nfd system create`:
+To create a blank system execute `nsd system create`:
 
-    Usage: nfd system create
+    Usage: nsd system create
 
     Example:
-    $ nfd system create
+    $ nsd system create
     prompt: name: <name>
     prompt: namespace: <namespace>
     prompt: confirm (y/n): y
 
 ### system clone
 
-To clone a system from an existing git repository execute `nfd system clone`:
+To clone a system from an existing git repository execute `nsd system clone`:
 
-    Usage: nfd system clone REPO
+    Usage: nsd system clone REPO
 
     Example:
-    $ nfd system clone git@github.com:nearform/nfd-demo
+    $ nsd system clone git@github.com:nearform/nsd-demo
 
 ### system sync
 
-To sync a system with its git repository execute `nfd system sync`:
+To sync a system with its git repository execute `nsd system sync`:
 
-    Usage: nfd system sync NAME
+    Usage: nsd system sync NAME
 
     Example:
-    $ nfd system sync nfd-demo
+    $ nsd system sync nsd-demo
 
 ### system list
 
-To list all systems execute `nfd system list`:
+To list all systems execute `nsd system list`:
 
-    Usage: nfd system list
+    Usage: nsd system list
 
     Example:
-    $ nfd system list
+    $ nsd system list
 
 ### system put
 
-To update a system with a new revision execute `nfd system put`:
+To update a system with a new revision execute `nsd system put`:
 
-    Usage: nfd system put < FILE
+    Usage: nsd system put < FILE
 
     Example:
-    $ nfd system put < nfd-demo.json
+    $ nsd system put < nsd-demo.json
 
 ### system deployed
 
-To get the deployed revision of a system execute `nfd system deployed`:
+To get the deployed revision of a system execute `nsd system deployed`:
 
-    Usage: nfd system deployed NAME
+    Usage: nsd system deployed NAME
 
     Example:
-    $ nfd system deployed nfd-demo
+    $ nsd system deployed nsd-demo
 
 ### system analyze
 
-To run an analysis of a system execute `nfd system analyze`:
+To run an analysis of a system execute `nsd system analyze`:
 
-    Usage: nfd system analyze NAME
+    Usage: nsd system analyze NAME
 
     Example:
-    $ nfd system analyze nfd-demo
+    $ nsd system analyze nsd-demo
 
 ### system check
 
-To run and verify an analysis of a system execute `nfd system check`:
+To run and verify an analysis of a system execute `nsd system check`:
 
-    Usage: nfd system check NAME
+    Usage: nsd system check NAME
 
     Example:
-    $ nfd system check nfd-demo
+    $ nsd system check nsd-demo
 
 ## container
 
@@ -133,49 +136,49 @@ The currently supported container types are docker (Docker container), aws-ami (
 
 ### container list
 
-To list all containers of a system execute `nfd container list`:
+To list all containers of a system execute `nsd container list`:
 
-    Usage: nfd container list NAME
+    Usage: nsd container list NAME
 
     Example:
-    $ nfd container list nfd-demo
+    $ nsd container list nsd-demo
 
 ### container add
 
-To add a container to a system execute `nfd container add`:
+To add a container to a system execute `nsd container add`:
 
-    Usage: nfd container add NAME
+    Usage: nsd container add NAME
 
     Example:
-    $ nfd container add nfd-demo
+    $ nsd container add nsd-demo
     prompt: type: docker
 
 ### container put
 
-To update a container with a new revision execute `nfd container put`:
+To update a container with a new revision execute `nsd container put`:
 
-    Usage: nfd container put < FILE
+    Usage: nsd container put < FILE
 
     Example:
-    $ nfd container put < container.json
+    $ nsd container put < container.json
 
 ### container delete
 
-To delete a container from a system execute `nfd container delete`:
+To delete a container from a system execute `nsd container delete`:
 
-    Usage: nfd container delete NAME CONTAINER
+    Usage: nsd container delete NAME CONTAINER
 
     Example:
-    $ nfd container delete nfd-demo web
+    $ nsd container delete nsd-demo web
 
 ### container build
 
-To build a container of a system execute `nfd container build`:
+To build a container of a system execute `nsd container build`:
 
-    Usage: nfd container build NAME CONTAINER
+    Usage: nsd container build NAME CONTAINER
 
     Example:
-    $ nfd container build nfd-demo web
+    $ nsd container build nsd-demo web
 
 ## Revision
 
@@ -183,63 +186,68 @@ A revision is a recorded system snapshot, automatically saved whenever there are
 
 ### revision list
 
-To list all revisions of a system execute `nfd revision list`:
+To list all revisions of a system execute `nsd revision list`:
 
-    Usage: nfd revision list NAME
+    Usage: nsd revision list NAME
 
     Example:
-    $ nfd revision list nfd-demo
+    $ nsd revision list nsd-demo
 
 ### revision get
 
-To get a revision of a system execute `nfd revision get`:
+To get a revision of a system execute `nsd revision get`:
 
-    Usage: nfd revision get NAME REVISION
+    Usage: nsd revision get NAME REVISION
 
     Example:
-    $ nfd revision get nfd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
+    $ nsd revision get nsd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
 
 ### revision deploy
 
-To deploy a revision of a system execute `nfd revision deploy`:
+To deploy a revision of a system execute `nsd revision deploy`:
 
-    Usage: nfd revision deploy NAME REVISION
+    Usage: nsd revision deploy NAME REVISION
 
     Example:
-    $ nfd revision deploy nfd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
+    $ nsd revision deploy nsd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
 
 ### revision mark
 
-To mark a revision of a system as being deployed execute `nfd revision mark`:
+To mark a revision of a system as being deployed execute `nsd revision mark`:
 
-    Usage: nfd revision mark NAME REVISION
+    Usage: nsd revision mark NAME REVISION
 
     Example:
-    $ nfd revision mark nfd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
+    $ nsd revision mark nsd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
 
 ### revision preview
 
-To preview the deploy workflow for a revision of a system execute `nfd revision preview`:
+To preview the deploy workflow for a revision of a system execute `nsd revision preview`:
 
-    Usage: nfd revision preview NAME REVISION
+    Usage: nsd revision preview NAME REVISION
 
     Example:
-    $ nfd revision preview nfd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
+    $ nsd revision preview nsd-demo 33417ff8f1299c1b35c40b562c5b8310cf66a4cf
 
 ## remote add
 
 To add a remote git repository to an existing system execute 'remote add':
 
-    Usage: nfd remote add NAME REPO
+    Usage: nsd remote add NAME REPO
 
     Example:
-    $ nfd remote add nfd-demo git@github.com:nearform/nfd-demo
+    $ nsd remote add nsd-demo git@github.com:nearform/nsd-demo
 
 ## timeline list
 
 To get the system timeline execute 'timeline list':
 
-    Usage: nfd timeline list NAME
+    Usage: nsd timeline list NAME
 
     Example:
-    $ nfd timeline list nfd-demo
+    $ nsd timeline list nsd-demo
+
+License
+-------
+
+Artistic License 2.0
