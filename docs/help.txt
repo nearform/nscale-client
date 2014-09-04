@@ -1,8 +1,12 @@
 
+-[ server ]----------
+server start [config]                 - start the server
+server stop                           - stop the server
+
 -[ login ]----------
 login                                 - login to the nominated host
 logout                                - logout from the nominated host
-use host [port]                       - use the given host and optional port
+use <host> [port]                     - use the given host and optional port
 help                                  - show this
 
 -[ system ]----------
