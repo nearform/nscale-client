@@ -47,6 +47,13 @@ if (command === 'server') {
 
 		console.log(command + " stopped");
 
+	} else if (action === 'logs') {
+
+		var logDir = '/usr/local/var/log/nscale';
+		var logfile = args[2] || 'server.log';
+		var logProcess = exec('tail -f -20 ' + logDir + '/' + logfile);
+		logProcess.stdout.pipe(process.stdout)
+
 	} else {
 		console.log("'" + command + " " + action + "' command not supported.");
 	}
