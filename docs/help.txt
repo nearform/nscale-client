@@ -14,7 +14,6 @@ help                                  - show this
 system create                         - create a new blank system
 system clone                          - clone a system from an existing git
                                         remote
-system sync                           - pull and push to the system remote
 system list                           - list all systems in this instance
 system put                            - put a new revision of the system
 system deployed <sys>                 - get the deployed revision of this system
@@ -24,11 +23,8 @@ system check <sys>                    - run an analysis and check it against the
                                         expected deployed system configuration
 
 -[ container ]----------
-container put                         - put a new revision a container
 container list <sys>                  - list all containers in this system
 container build <sys> <cont>          - build a specific container
-container edit <sys> <cont>           - edit a container
-container delete <sys> <cont>         - delete a container
 
 -[ revision ]----------
 revision get <sys> <rev>              - get a specific revision for a system
@@ -39,8 +35,3 @@ revision mark <sys> <rev>             - mark a specific revision as deployed
 revision preview <sys> <rev>          - preview the deploy operations for a
                                         specific revision of this system
 
--[ remote ]----------
-remote add <systemid> <url>           - add a remote to an existing system
-
--[ timeline ]----------
-timeline list <systemid>              - list the timeline for this system
