@@ -19,6 +19,12 @@
 
 var exec = require('child_process').exec;
 
+function getUserHome() {
+  return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+}
+
+var nscaleRoot = getUserHome() + '/nscale';
+
 var args = process.argv.slice(2);
 var command = args[0];
 
@@ -28,8 +34,8 @@ if (command === 'server') {
 	if (action === 'start') {
 		console.log(command + " starting..");
 
-		var config = args[2] || '/usr/local/etc/nscale/config.json';
-		var logDir = '/usr/local/var/log/nscale';
+		var config = args[2] || nscaleRoot + '/config/config.json';
+		var logDir = nscaleRoot + '/log';
 
 		var serverProcess = exec('nsd-server -c ' + config + ' > ' + logDir + '/server.log 2>&1 &');
 		var apiProcess = exec('nsd-api -c ' + config + ' > ' + logDir + '/api.log 2>&1 &');
@@ -49,7 +55,7 @@ if (command === 'server') {
 
 	} else if (action === 'logs') {
 
-		var logDir = '/usr/local/var/log/nscale';
+		var logDir = nscaleRoot + '/log';
 		var logfile = args[2] || 'server.log';
 		var logProcess = exec('tail -f -20 ' + logDir + '/' + logfile);
 		logProcess.stdout.pipe(process.stdout)
