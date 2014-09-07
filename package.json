@@ -9,7 +9,7 @@
     "line",
     "client"
   ],
-  "version": "0.1.4",
+  "version": "0.1.5",
   "license": "Artistic License 2.0",
   "author": "Peter Elger (http://nearform.com/)",
   "contributors": [
@@ -24,7 +24,7 @@
     "cli-table": "^0.3.0",
     "commist": "^0.2.0",
     "lodash": "^2.4.1",
-    "nscale-sdk": "~0.1.0",
+    "nscale-sdk": "~0.1.1",
     "progress": "^1.1.5",
     "prompt": "^0.2.13"
   },
