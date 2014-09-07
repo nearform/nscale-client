@@ -23,7 +23,7 @@ function getUserHome() {
   return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 }
 
-var nscaleRoot = getUserHome() + '/nscale';
+var nscaleRoot = getUserHome() + '/.nscale';
 
 var args = process.argv.slice(2);
 var command = args[0];
