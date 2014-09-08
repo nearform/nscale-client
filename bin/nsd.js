@@ -17,13 +17,22 @@
 
 'use strict';
 
-var exec = require('child_process').exec;
+var exec = require('child_process').exec,
+		fs 	 = require('fs');
+
+var nscaleRoot = getUserHome() + '/.nscale';
 
 function getUserHome() {
   return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 }
 
-var nscaleRoot = getUserHome() + '/.nscale';
+function start() {
+	var logDir = nscaleRoot + '/log';
+	var serverProcess = exec('nsd-server -c ' + config + ' > ' + logDir + '/server.log 2>&1 &');
+	var apiProcess = exec('nsd-api -c ' + config + ' > ' + logDir + '/api.log 2>&1 &');
+	var webProcess = exec('nsd-web -c ' + config + ' > ' + logDir + '/web.log 2>&1 &');
+	console.log(command + " started");
+}
 
 var args = process.argv.slice(2);
 var command = args[0];
@@ -35,13 +44,16 @@ if (command === 'server') {
 		console.log(command + " starting..");
 
 		var config = args[2] || nscaleRoot + '/config/config.json';
-		var logDir = nscaleRoot + '/log';
 
-		var serverProcess = exec('nsd-server -c ' + config + ' > ' + logDir + '/server.log 2>&1 &');
-		var apiProcess = exec('nsd-api -c ' + config + ' > ' + logDir + '/api.log 2>&1 &');
-		var webProcess = exec('nsd-web -c ' + config + ' > ' + logDir + '/web.log 2>&1 &');
-
-		console.log(command + " started");
+		// if config is default config then check if it exists, if not then run nsd-init before starting
+		if (config === nscaleRoot + '/config/config.json' && (!fs.existsSync(config)) ) {
+			var initProcess = exec('nsd-init');
+			initProcess.on('exit', function () {
+    		start();
+			});
+		} else {
+			start();
+		}
 
 	} else if (action === 'stop') {
 
