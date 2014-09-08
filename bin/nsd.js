@@ -28,7 +28,7 @@ function getUserHome() {
 
 function start() {
 	var logDir = nscaleRoot + '/log';
-	var serverProcess = exec('nsd-server -c ' + config + ' > ' + logDir + '/server.log 2>&1');
+	var serverProcess = exec('nsd-server -c ' + config + ' > ' + logDir + '/server.log 2>&1 &');
 	var apiProcess = exec('nsd-api -c ' + config + ' > ' + logDir + '/api.log 2>&1 &');
 	var webProcess = exec('nsd-web -c ' + config + ' > ' + logDir + '/web.log 2>&1 &');
 	console.log(command + " started");
@@ -61,8 +61,7 @@ if (command === 'server') {
 
 		exec("kill $(ps aux | grep [n]sd-web | awk '{print $2}')");
 		exec("kill $(ps aux | grep [n]sd-api | awk '{print $2}')");
-		// exec("kill $(ps aux | grep [n]sd-server | awk '{print $2}')");
-		exec("kill $(ps aux | grep [n]scale-kernel | awk '{print $2}')");
+		exec("kill $(ps aux | grep [n]sd-server | awk '{print $2}')");
 
 		console.log(command + " stopped");
 
