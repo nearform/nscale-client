@@ -61,7 +61,7 @@ if (command === 'server') {
 
 		exec("kill $(ps aux | grep [n]sd-web | awk '{print $2}')");
 		exec("kill $(ps aux | grep [n]sd-api | awk '{print $2}')");
-		exec("kill $(ps aux | grep [n]sd-server | awk '{print $2}')");
+		exec("kill $(ps aux | grep [n]scale-server | awk '{print $2}')");
 
 		console.log(command + " stopped");
 
