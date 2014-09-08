@@ -69,7 +69,7 @@ if (command === 'server') {
 
 		var logDir = nscaleRoot + '/log';
 		var logfile = args[2] || 'server.log';
-		var logProcess = exec('tail -f -20 ' + logDir + '/' + logfile);
+		var logProcess = exec('tail -f ' + logDir + '/' + logfile);
 		logProcess.stdout.pipe(process.stdout)
 
 	} else {
