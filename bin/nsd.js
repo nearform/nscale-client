@@ -18,65 +18,67 @@
 'use strict';
 
 var exec = require('child_process').exec,
-		fs 	 = require('fs');
-
-var nscaleRoot = getUserHome() + '/.nscale';
-
-function getUserHome() {
-  return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
-}
-
-function start() {
-	var logDir = nscaleRoot + '/log';
-	var serverProcess = exec('nsd-server -c ' + config + ' > ' + logDir + '/server.log 2>&1 &');
-	var apiProcess = exec('nsd-api -c ' + config + ' > ' + logDir + '/api.log 2>&1 &');
-	var webProcess = exec('nsd-web -c ' + config + ' > ' + logDir + '/web.log 2>&1 &');
-	console.log(command + " started");
-}
+    fs   = require('fs');
 
 var args = process.argv.slice(2);
 var command = args[0];
 
-if (command === 'server') {
-
-	var action = args[1];
-	if (action === 'start') {
-		console.log(command + " starting..");
-
-		var config = args[2] || nscaleRoot + '/config/config.json';
-
-		// if config is default config then check if it exists, if not then run nsd-init before starting
-		if (config === nscaleRoot + '/config/config.json' && (!fs.existsSync(config)) ) {
-			var initProcess = exec('nsd-init');
-			initProcess.on('exit', function () {
-    		start();
-			});
-		} else {
-			start();
-		}
-
-	} else if (action === 'stop') {
-
-		console.log(command + " stopping..");
-
-		exec("kill $(ps aux | grep [n]sd-web | awk '{print $2}')");
-		exec("kill $(ps aux | grep [n]sd-api | awk '{print $2}')");
-		exec("kill $(ps aux | grep [n]sd-server | awk '{print $2}')");
-
-		console.log(command + " stopped");
-
-	} else if (action === 'logs') {
-
-		var logDir = nscaleRoot + '/log';
-		var logfile = args[2] || 'server.log';
-		var logProcess = exec('tail -f ' + logDir + '/' + logfile);
-		logProcess.stdout.pipe(process.stdout)
-
-	} else {
-		console.log("'" + command + " " + action + "' command not supported.");
-	}
-
-} else {
-	require('../lib/main')(process.argv.slice(2));
+function getUserHome() {
+  return process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
 }
 
+var nscaleRoot = getUserHome() + '/.nscale';
+var config = args[2] || nscaleRoot + '/config/config.json';
+
+function start() {
+  var logDir = nscaleRoot + '/log';
+  var serverProcess = exec('nsd-server -c ' + config + ' > ' + logDir + '/server.log 2>&1 &');
+  exec('nsd-api -c ' + config + ' > ' + logDir + '/api.log 2>&1 &');
+  exec('nsd-web -c ' + config + ' > ' + logDir + '/web.log 2>&1 &');
+  console.log(command + ' started');
+}
+
+if (command === 'server') {
+
+  var action = args[1];
+  if (action === 'start') {
+    console.log(command + ' starting..');
+
+    // if config is default config then check if it exists, if not then run nsd-init before starting
+    if (config === nscaleRoot + '/config/config.json' && (!fs.existsSync(config)) ) {
+      var initProcess = exec('nsd-init');
+      initProcess.on('exit', function () {
+        start();
+      });
+    }
+    else {
+      start();
+    }
+
+  }
+  else if (action === 'stop') {
+
+    console.log(command + ' stopping..');
+
+    exec('kill $(ps aux | grep [n]sd-web | awk \'{print $2}\')');
+    exec('kill $(ps aux | grep [n]sd-api | awk \'{print $2}\')');
+    exec('kill $(ps aux | grep [n]sd-server | awk \'{print $2}\')');
+
+    console.log(command + ' stopped');
+
+  }
+  else if (action === 'logs') {
+
+    var logDir = nscaleRoot + '/log';
+    var logfile = args[2] || 'server.log';
+    var logProcess = exec('tail -f ' + logDir + '/' + logfile);
+    logProcess.stdout.pipe(process.stdout);
+
+  }
+  else {
+    console.log('\'' + command + ' ' + action + '\' command not supported.');
+  }
+
+} else {
+  require('../lib/main')(process.argv.slice(2));
+}
