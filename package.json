@@ -31,8 +31,8 @@
   },
   "main": "./lib/main",
   "bin": {
-    "nsd": "./bin/nsd.js",
-    "nscale": "./bin/nsd.js"
+    "nsd": "./lib/main.js",
+    "nscale": "./lib/main.js"
   },
   "repository": {
     "type": "git",
