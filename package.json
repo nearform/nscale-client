@@ -28,7 +28,8 @@
     "nscale-sdk": "~0.3.0",
     "progress": "^1.1.5",
     "prompt": "^0.2.13",
-    "shell-quote": "^1.4.2"
+    "shell-quote": "^1.4.2",
+    "username": "^1.0.0"
   },
   "main": "./lib/main",
   "bin": {
