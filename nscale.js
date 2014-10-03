@@ -24,8 +24,8 @@ var path = require('path');
 var cliTable = require('cli-table');
 var sdk = require('nscale-sdk/main')();
 var prompt = require('prompt');
-var cfg = require('./config');
-var fetchSys = require('./fetchSys');
+var cfg = require('./lib/config');
+var fetchSys = require('./lib/fetchSys');
 var exec = require('child_process').exec;
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
 
@@ -76,7 +76,7 @@ function quit() {
 
 
 function showHelp() {
-  var file = path.join(__dirname, '../', 'docs', 'help.txt');
+  var file = path.join(__dirname, './', 'docs', 'help.txt');
   fs.createReadStream(file)
     .pipe(process.stdout);
 }
