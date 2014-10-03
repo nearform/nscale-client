@@ -1,7 +1,7 @@
 
 -[ server ]----------
-server start [config] [--sudo]        - start the server
-server stop [--sudo]                  - stop the server
+server start [config]                 - start the server
+server stop                           - stop the server
 server logs [logfile]                 - tail the server logs
 
 -[ login ]----------

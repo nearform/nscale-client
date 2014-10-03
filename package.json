@@ -20,6 +20,7 @@
     "node": "*"
   },
   "dependencies": {
+    "async": "^0.9.0",
     "blessed": "0.0.36",
     "cli-table": "^0.3.0",
     "commist": "^0.2.0",
