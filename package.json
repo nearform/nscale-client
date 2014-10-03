@@ -20,19 +20,17 @@
     "node": "*"
   },
   "dependencies": {
-    "blessed": "0.0.36",
     "cli-table": "^0.3.0",
     "commist": "^0.2.0",
     "lodash": "^2.4.1",
     "nscale-sdk": "~0.3.0",
-    "progress": "^1.1.5",
     "prompt": "^0.2.13",
     "shell-quote": "^1.4.2"
   },
-  "main": "./lib/main",
+  "main": "./nscale.js",
   "bin": {
-    "nsd": "./lib/main.js",
-    "nscale": "./lib/main.js"
+    "nsd": "./nscale.js",
+    "nscale": "./nscale.js"
   },
   "repository": {
     "type": "git",

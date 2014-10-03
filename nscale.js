@@ -24,13 +24,10 @@ var path = require('path');
 var cliTable = require('cli-table');
 var sdk = require('nscale-sdk/main')();
 var prompt = require('prompt');
-var cfg = require('./config');
-var fetchSys = require('./fetchSys');
-//var editor = require('./editor');
+var cfg = require('./lib/config');
+var fetchSys = require('./lib/fetchSys');
 var exec = require('child_process').exec;
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
-
-//var ProgressBar = require('progress');
 
 var tableChars = { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': '',
                    'bottom': '' , 'bottom-mid': '' , 'bottom-left': '' , 'bottom-right': '',
@@ -45,7 +42,7 @@ var stdoutHandler = function(out) {
 };
 
 var stderrHandler = function(err) {
-  if (err.message) { 
+  if (err.message) {
     console.log('ERROR: ' + err.message.replace(/\n$/, ''));
   }
   else if (err.stderr) {
@@ -79,7 +76,7 @@ function quit() {
 
 
 function showHelp() {
-  var file = path.join(__dirname, '../', 'docs', 'help.txt');
+  var file = path.join(__dirname, './', 'docs', 'help.txt');
   fs.createReadStream(file)
     .pipe(process.stdout);
 }
@@ -102,50 +99,6 @@ function login() {
       quit();
     });
   });
-
-/*
-  var config = cfg.getConfig();
-  prompt.start();
-
-  prompt.get([{name:'nfdlogin', description:'nfd username / password login (y/n)', pattern:'^[y|n|Y|N]$', required:true}], function(err, result) {
-
-    if ('y' === result.nfdlogin.trim().toLowerCase()) {
-      prompt.get([{name:'username', required:true}, {name:'password', required:true, hidden:true}], function(err, result) {
-        sdk.connect({host: config.host, port: config.port}, function() {
-          sdk.login(result.username, result.password, function(result) {
-            if (result.user && result.user.token) {
-              cfg.setToken(result.user.token);
-              console.log('ok');
-            }
-            else {
-              console.log('error: ' + result.why);
-            }
-            quit();
-          });
-        });
-      });
-    }
-    else {
-      prompt.get([{name:'token', description:'github access token', required:true}], function(err, result) {
-        sdk.connect({host: config.host, port: config.port}, function() {
-          sdk.ioHandlers(function(){}, function(err) {
-            console.log(err.stderr);
-            quit();
-          });
-          sdk.githublogin(result.token, function(out) {
-            if (out.user) {
-              cfg.setToken(out.user.token);
-            }
-            else {
-              console.log(JSON.stringify(out, null, 2));
-            }
-            quit();
-          });
-        });
-      });
-    }
-  });
-*/
 }
 
 var responseOk = function(resp) {
@@ -211,7 +164,6 @@ var getDeployed = function(args) {
   fetchSys(1, args);
 
   sdk.getDeployed(args._[0], function(system) {
-    //console.log(system.guid + ' ' + system.description);
     console.log(JSON.stringify(system, null, 2));
     quit();
   });
@@ -255,19 +207,6 @@ var createSystem = function() {
 };
 
 
-
-/*
-var deleteSystem = function(args) {
-  sdk.deleteSystem(args._[0], function(result) {
-    console.log('ok');
-    //console.log(JSON.stringify(result, null, 2));
-    quit();
-  });
-};
-*/
-
-
-
 var putSystem = function() {
   sdk.ioHandlers(stdoutHandler, stderrHandler);
   var sys = '';
@@ -279,7 +218,6 @@ var putSystem = function() {
     sdk.putSystem(sys, function(response) {
       console.log(response.result);
       if (response.err) { console.log(response.err); }
-      //console.log(JSON.stringify(response, null, 2));
       quit();
     });
   });
@@ -309,52 +247,6 @@ var syncSystem = function(args) {
   });
 };
 
-
-
-//var putContainer = function(args) {
-//  sdk.ioHandlers(stdoutHandler, stderrHandler);
-//  var sys = '';
-//  process.stdin.on('readable', function() {
-//    sys += process.stdin.read();
-//  });
-//
-//  process.stdin.on('end', function() {
-//    sdk.putContainer(args._[0], sys, function(response) {
-//      console.log(response.result);
-//      if (response.err) { console.log(response.err); }
-//      //console.log(JSON.stringify(response, null, 2));
-//      quit();
-//    });
-//  });
-//};
-
-
-
-//var addContainer = function(args) {
-//  sdk.ioHandlers(stdoutHandler, stderrHandler);
-//  prompt.start();
-//  prompt.get(['type'], function(err, result) {
-//    editor.create(result.type, function(container) {
-//      sdk.addContainer(args._[0], JSON.stringify(container), function(response) {
-//        console.log(response.result);
-//        if (response.err) { console.log(response.err); }
-//        console.log(JSON.stringify(response, null, 2));
-//        quit();
-//      });
-//    });
-//  });
-//};
-
-
-//var deleteContainer = function(args) {
-//  sdk.ioHandlers(stdoutHandler, stderrHandler);
-//  sdk.deleteContainer(args._[0], args._[1], function(response) {
-//    console.log(response.result);
-//    if (response.err) { console.log(response.err); }
-//    //console.log(JSON.stringify(response, null, 2));
-//    quit();
-//  });
-//};
 
 
 
@@ -645,8 +537,6 @@ program.register('system list', connect.bind(null, listSystems));
 program.register('system put', connect.bind(null, putSystem));
 program.register('system create', connect.bind(null, createSystem));
 program.register('system sync', connect.bind(null, syncSystem));
-// disabled by @mcollina
-//program.register('system delete', connect.bind(null, deleteSystem));
 program.register('system clone', connect.bind(null, cloneSystem));
 program.register('system current', connect.bind(null, getDeployed));
 program.register('system analyze', connect.bind(null, analyzeSystem));
@@ -655,9 +545,6 @@ program.register('system fix', connect.bind(null, fixSystem));
 program.register('system use', useSystem);
 
 program.register('container list', connect.bind(null, listContainers));
-//program.register('container put', connect.bind(null, putContainer));
-//program.register('container add', connect.bind(null, addContainer));
-//program.register('container delete', connect.bind(null, deleteContainer));
 program.register('container build', connect.bind(null, buildContainer));
 
 program.register('revision list', connect.bind(null, listRevisions));
