@@ -27,6 +27,8 @@ var prompt = require('prompt');
 var cfg = require('./lib/config');
 var fetchSys = require('./lib/fetchSys');
 var exec = require('child_process').exec;
+var async = require('async');
+var username = require('username');
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
 
 var tableChars = { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': '',
@@ -482,18 +484,40 @@ function startServer(args) {
   console.log('nscale servers starting..');
 
   var config = args._[0] || nscaleRoot + '/config/config.json';
+  var stat;
+
+  var servers = [
+    'nsd-server',
+    'nsd-api',
+    'nsd-web'
+  ];
+
+  if (fs.existsSync('/var/run/docker.sock')) {
+    stat = fs.statSync('/var/run/docker.sock')
+    if (process.getgroups().indexOf(stat.gid) === -1 && process.getuid() !== stat.uid) {
+      console.error('unable to read and write /var/run/docker.sock, to fix run:');
+      console.error('\tsudo usermod -G docker -a', username.sync());
+      process.exit(1);
+    }
+  }
 
   function start() {
     var logDir = nscaleRoot + '/log';
-    var server = 'nsd-server -c ' + config + ' > ' + logDir + '/server.log 2>&1 &';
-    if (args.sudo) {
-      server = 'sudo SSH_AUTH_SOCK=$SSH_AUTH_SOCK ' + server;
-    }
-    // stdio: 'inherit' is needed to make sudo work
-    exec(server, { stdio: 'inherit' } );
-    exec('nsd-api -c ' + config + ' > ' + logDir + '/api.log 2>&1 &', { stdio: 'inherit' } );
-    exec('nsd-web -c ' + config + ' > ' + logDir + '/web.log 2>&1 &', { stdio: 'inherit' } );
-    console.log('nscale servers started');
+
+    async.eachSeries(servers, function(server, cb) {
+      var log = logDir + '/' + server.replace('nsd-', '') + '.log';
+      exec(server + ' -c ' + config + ' > ' + log + ' 2>&1 &',
+           { stdio: 'inherit' }, cb);
+    }, function(err) {
+
+      if (err) {
+        console.error('an error occured: ', err);
+        console.error('\ncheck the logs with:');
+        console.error('\tnsd server logs');
+      } else {
+        console.log('nscale servers started');
+      }
+    });
   }
 
   // if config is default config then check if it exists, if not then run nsd-init before starting
@@ -510,16 +534,29 @@ function stopServer(args) {
 
   console.log('nscale servers stopping..');
 
+  var servers = [
+    'nscale-kernel',
+    'nscale-api',
+    'nscale-web'
+  ];
 
-  var killAll = 'kill $(ps aux | grep -E \'nscale|nsd\' | awk \'{print $2}\')';
+  async.eachSeries(servers, function(server, cb) {
+    var command = 'ps aux | grep -v grep | grep -E \'' + server + '\' | awk \'{print $2}\' | xargs kill -9';
+    exec(command, { stdio: 'inherit' }, function(err, data) {
+      if (err && !err.message.match(/No such process/)) {
+        return cb(err);
+      }
+      cb();
+    });
+  }, function(err) {
 
-  if (args.sudo) {
-    killAll = 'sudo ' + killAll;
-  }
-
-  exec(killAll, { sdtio: 'inherit' }); // we will be killed
-
-  console.log('nscale servers stopped');
+    if (err) {
+      console.error('unable to stop all server processes\n');
+      console.error('error occured: ', err);
+    } else {
+      console.error('nscale servers stopped');
+    }
+  })
 }
 
 function logServer(args) {
