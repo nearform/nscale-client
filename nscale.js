@@ -36,7 +36,14 @@ var tableChars = { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': '',
                    'left': '' , 'left-mid': '' , 'mid': '' , 'mid-mid': '',
                    'right': '' , 'right-mid': '' , 'middle': ' ' };
 var tableStyle = { 'padding-left': 0, 'padding-right': 0 };
+var callbackCalled = false;
 process.stdin.setEncoding('utf8');
+
+process.on('exit', function() {
+  if (!callbackCalled) {
+    throw new Error('callback not called');
+  }
+});
 
 
 var stdoutHandler = function(out) {
@@ -69,8 +76,14 @@ function connect(next, opts) {
 
 
 
-function quit() {
+function quit(err) {
+  callbackCalled = true;
   sdk.quit(function() {
+    if (err) {
+      stderrHandler(err);
+      process.exit(1);
+    }
+    console.log('ok!');
     process.exit(0);
   });
 }
@@ -604,8 +617,9 @@ module.exports = function(argv) {
   var remaining = program.parse(argv);
   if (remaining) {
     console.log('No matching command.');
-    showHelp();
+    return showHelp();
   }
+  console.log('it worked if it ends with ok');
 };
 
 if (require.main === module) {
