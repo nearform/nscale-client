@@ -16,7 +16,7 @@ system clone                          - clone a system from an existing git
                                         remote
 system list                           - list all systems in this instance
 system put                            - put a new revision of the system
-system deployed <sys>                 - get the deployed revision of this system
+system current <sys>                  - get the deployed revision of this system
 system analyze <sys>                  - run an analysis for this system and
                                         output the results
 system check <sys>                    - run an analysis and check it against the
