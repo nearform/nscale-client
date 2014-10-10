@@ -456,6 +456,18 @@ var fixSystem = function(args) {
 
 
 
+var compileSystem = function(args) {
+  fetchSys(1, args);
+  console.log('--> compile');
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+  sdk.compileSystem(args._[0], args._[1], function(result) {
+    console.log(JSON.stringify(result, null, 2));
+    quit();
+  });
+};
+
+
+
 var logout = function() {
   cfg.clearToken();
   process.exit(0);
@@ -579,6 +591,7 @@ program.register('system current', connect.bind(null, getDeployed));
 program.register('system analyze', connect.bind(null, analyzeSystem));
 program.register('system check', connect.bind(null, checkSystem));
 program.register('system fix', connect.bind(null, fixSystem));
+program.register('system compile', connect.bind(null, compileSystem));
 program.register('system use', useSystem);
 
 program.register('container list', connect.bind(null, listContainers));
