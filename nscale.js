@@ -63,12 +63,45 @@ var stderrHandler = function(err) {
 };
 
 
+
+function quit(err) {
+  function done() {
+    if (err) {
+      stderrHandler(err);
+      process.exit(1);
+    }
+    console.log('ok!');
+    process.exit(0);
+  }
+
+  callbackCalled = true;
+  if (sdk.connected) {
+    sdk.quit(done);
+  }
+  else {
+    done();
+  }
+}
+
+
+
 function connect(next, opts) {
   var config = cfg.getConfig();
 
+  sdk.on('error', function(err) {
+    console.error('Server disconnected with an error:');
+    quit(err);
+  });
+
+  // Server shouldn't disconnect before we do, and after we disconnect we
+  // `process.exit`, so if it does it's an error condition.
+  sdk.on('end', function() {
+    quit(new Error('Server disconnected abruptly.'));
+  });
+
   sdk.connect({host: config.host, port: config.port, token: config.token}, function(err) {
     if (err) {
-      throw err;
+      quit(err);
     }
     next(opts);
   });
@@ -76,24 +109,10 @@ function connect(next, opts) {
 
 
 
-function quit(err) {
-  callbackCalled = true;
-  sdk.quit(function() {
-    if (err) {
-      stderrHandler(err);
-      process.exit(1);
-    }
-    console.log('ok!');
-    process.exit(0);
-  });
-}
-
-
-
 function showHelp() {
   var file = path.join(__dirname, './', 'docs', 'help.txt');
-  fs.createReadStream(file)
-    .pipe(process.stdout);
+  process.stdout.write(fs.readFileSync(file));
+  quit();
 }
 
 
@@ -116,30 +135,19 @@ function login() {
   });
 }
 
-var responseOk = function(resp) {
-  if (resp && resp.ok !== undefined) {
-    if (!resp.ok) {
-      console.log();
-      console.log('ERROR: ' + JSON.stringify(resp.err));
-      console.log();
-      return false;
-    }
-  }
-  return true;
-};
-
-
 var listSystems = function() {
   sdk.ioHandlers(stdoutHandler, stderrHandler);
   var table = new cliTable({chars: tableChars, style: tableStyle,
                             head: ['Name', 'Id'], colWidths: [30, 50]});
-  sdk.listSystems(function(systems) {
-    if (responseOk(systems)) {
-      _.each(systems, function(system) {
-        table.push([system.name, system.id]);
-      });
-      console.log(table.toString());
+  sdk.listSystems(function(err, systems) {
+    if (err) {
+      return quit(err);
     }
+
+    _.each(systems, function(system) {
+      table.push([system.name, system.id]);
+    });
+    console.log(table.toString());
     quit();
   });
 };
@@ -152,7 +160,11 @@ var listContainers = function(args) {
 
   fetchSys(1, args);
 
-  sdk.listContainers(args._[0], function(containers) {
+  sdk.listContainers(args._[0], function(err, containers) {
+    if (err) {
+      return quit(err);
+    }
+
     var name;
     var type;
     var id;
@@ -178,7 +190,11 @@ var getDeployed = function(args) {
 
   fetchSys(1, args);
 
-  sdk.getDeployed(args._[0], function(system) {
+  sdk.getDeployed(args._[0], function(err, system) {
+    if (err) {
+      return quit(err);
+    }
+
     console.log(JSON.stringify(system, null, 2));
     quit();
   });
@@ -203,11 +219,13 @@ var createSystem = function() {
       var key = 'confirm (y/n)';
       prompt.get([key], function(err, r3) {
         if (r3[key] === 'y' || r3[key] === 'Y') {
-          sdk.createSystem(r1.name, r2.namespace, process.cwd(), function(system) {
-            if (responseOk(system)) {
-              if (system.id) {
-                console.log('ok');
-              }
+          sdk.createSystem(r1.name, r2.namespace, process.cwd(), function(err, system) {
+            if (err) {
+              return quit(err);
+            }
+
+            if (system.id) {
+              console.log('ok');
             }
             quit();
           });
@@ -230,9 +248,12 @@ var putSystem = function() {
   });
 
   process.stdin.on('end', function() {
-    sdk.putSystem(sys, function(response) {
+    sdk.putSystem(sys, function(err, response) {
+      if (err) {
+        return quit(err);
+      }
+
       console.log(response.result);
-      if (response.err) { console.log(response.err); }
       quit();
     });
   });
@@ -242,10 +263,12 @@ var putSystem = function() {
 
 var cloneSystem = function(args) {
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.cloneSystem(args._[0], process.cwd(), function(response) {
-    if (responseOk(response)) {
-      console.log(response.result);
+  sdk.cloneSystem(args._[0], process.cwd(), function(err, response) {
+    if (err) {
+      return quit(err);
     }
+
+    console.log(response.result);
     quit();
   });
 };
@@ -254,9 +277,12 @@ var cloneSystem = function(args) {
 
 var syncSystem = function(args) {
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.syncSystem(args._[0], function(response) {
+  sdk.syncSystem(args._[0], function(err, response) {
+    if (err) {
+      return quit(err);
+    }
+
     console.log(response.result);
-    if (response.err) { console.log(response.err); }
     console.log(JSON.stringify(response, null, 2));
     quit();
   });
@@ -270,12 +296,12 @@ var buildContainer = function(args) {
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
 
-  sdk.buildContainer(args._[0], args._[1],function(response) {
-    if (responseOk(response)) {
-      if (response) {
-        console.log(response.result);
-      }
+  sdk.buildContainer(args._[0], args._[1],function(err, response) {
+    if (err) {
+      return quit(err);
     }
+
+    console.log(response.result);
     quit();
   });
 };
@@ -292,7 +318,11 @@ var listRevisions = function(args) {
                             //colWidths: [40, 8, 55, 25, 100]});
                             colWidths: [20, 8, 55, 25, 50]});
 
-  sdk.listRevisions(args._[0], function(revisions) {
+  sdk.listRevisions(args._[0], function(err, revisions) {
+    if (err) {
+      return quit(err);
+    }
+
     _.each(revisions, function(revision){
       if (revision.deployed) {
         table.push([revision.id, revision.deployed, revision.author, revision.date, revision.message.trim()]);
@@ -313,7 +343,11 @@ var getRevision = function(args) {
   fetchSys(2, args);
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.getRevision(args._[0], args._[1], function(revisions) {
+  sdk.getRevision(args._[0], args._[1], function(err, revisions) {
+    if (err) {
+      return quit(err);
+    }
+
     console.log(JSON.stringify(revisions, null, 2));
     quit();
   });
@@ -328,7 +362,11 @@ var listTimeline = function(args) {
                             head: ['Timestamp', 'User', 'Action', 'Details'],
                             colWidths: [40, 20, 20, 60]});
 
-  sdk.timeline(args._[0], function(timeline) {
+  sdk.timeline(args._[0], function(err, timeline) {
+    if (err) {
+      return quit(err);
+    }
+
     _.each(timeline.entries.reverse(), function(entry){
       table.push(['' + entry.ts, entry.user.name, entry.type, entry.details]);
     });
@@ -344,12 +382,12 @@ var deployRevision = function(args) {
   fetchSys(2, args);
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.deployRevision(args._[0], args._[1], function(result) {
-    if (responseOk(result)) {
-      if (result) {
-        console.log(JSON.stringify(result, null, 2));
-      }
+  sdk.deployRevision(args._[0], args._[1], function(err, result) {
+    if (err) {
+      return quit(err);
     }
+
+    console.log(JSON.stringify(result, null, 2));
     quit();
   });
 };
@@ -361,10 +399,12 @@ var markRevisionDeployed = function(args) {
   fetchSys(2, args);
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.markRevision(args._[0], args._[1], function(result) {
-    if (result) {
-      console.log(JSON.stringify(result, null, 2));
+  sdk.markRevision(args._[0], args._[1], function(err, result) {
+    if (err) {
+      return quit(err);
     }
+
+    console.log(JSON.stringify(result, null, 2));
     quit();
   });
 };
@@ -375,26 +415,27 @@ var previewRevision = function(args) {
 
   fetchSys(2, args);
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.previewRevision(args._[0], args._[1], function(operations) {
-
-    if (responseOk(operations)) {
-      console.log();
-      var table = new cliTable({chars: tableChars, style: tableStyle, head: ['Command', 'Id'], colWidths: [30, 50]});
-      console.log('execution plan: ');
-      _.each(operations.plan, function(element) {
-        table.push([element.cmd, element.id]);
-      });
-      console.log(table.toString());
-      console.log();
-
-      var opsTable = new cliTable({chars: tableChars, style: tableStyle, head: ['Host', 'Command'], colWidths: [20, 150]});
-      console.log('operations: ');
-      _.each(operations.ops, function(operation) {
-        opsTable.push([operation.host, operation.cmd]);
-      });
-      console.log(opsTable.toString());
-      console.log();
+  sdk.previewRevision(args._[0], args._[1], function(err, operations) {
+    if (err) {
+      return quit(err);
     }
+
+    console.log();
+    var table = new cliTable({chars: tableChars, style: tableStyle, head: ['Command', 'Id'], colWidths: [30, 50]});
+    console.log('execution plan: ');
+    _.each(operations.plan, function(element) {
+      table.push([element.cmd, element.id]);
+    });
+    console.log(table.toString());
+    console.log();
+
+    var opsTable = new cliTable({chars: tableChars, style: tableStyle, head: ['Host', 'Command'], colWidths: [20, 150]});
+    console.log('operations: ');
+    _.each(operations.ops, function(operation) {
+      opsTable.push([operation.host, operation.cmd]);
+    });
+    console.log(opsTable.toString());
+    console.log();
     quit();
   });
 };
@@ -405,11 +446,12 @@ var analyzeSystem = function(args) {
   fetchSys(1, args);
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.analyzeSystem(args._[0], function(result) {
-    console.log(result);
-    if (result) {
-      console.log(JSON.stringify(result, null, 2));
+  sdk.analyzeSystem(args._[0], function(err, result) {
+    if (err) {
+      return quit(err);
     }
+
+    console.log(JSON.stringify(result, null, 2));
     quit();
   });
 };
@@ -420,7 +462,11 @@ var checkSystem = function(args) {
 
   fetchSys(1, args);
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.checkSystem(args._[0], function(operations) {
+  sdk.checkSystem(args._[0], function(err, operations) {
+    if (err) {
+      return quit(err);
+    }
+
     console.log();
 
     if (operations.plan.length > 0) {
@@ -457,11 +503,13 @@ var checkSystem = function(args) {
 var fixSystem = function(args) {
   fetchSys(1, args);
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.fixSystem(args._[0], function(result) {
-    console.log();
-    if (responseOk(result)) {
-      console.log('Fix completed, run \'system check\' to confirm');
+  sdk.fixSystem(args._[0], function(err) {
+    if (err) {
+      return quit(err);
     }
+
+    console.log();
+    console.log('Fix completed, run \'system check\' to confirm');
     console.log();
     quit();
   });
