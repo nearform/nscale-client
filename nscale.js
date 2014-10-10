@@ -55,7 +55,7 @@ var stderrHandler = function(err) {
     console.log('ERROR: ' + err.message.replace(/\n$/, ''));
   }
   else if (err.stderr) {
-    console.log('ERROR: ' + err.stderr.replace(/\n$/, ''));
+    process.stdout.write(err.stderr);
   }
   else {
     console.log('ERROR: ' + JSON.stringify(err));
