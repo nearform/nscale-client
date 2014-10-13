@@ -301,7 +301,9 @@ var buildContainer = function(args) {
       return quit(err);
     }
 
-    console.log(response.result);
+    if (response && response.result) {
+      console.log(response.result);
+    }
     quit();
   });
 };
