@@ -27,6 +27,7 @@ system compile <sys>                  - run a compile of the system description
 -[ container ]----------
 container list <sys>                  - list all containers in this system
 container build <sys> <cont>          - build a specific container
+container buildall <sys>              - build all containers in this system
 
 -[ revision ]----------
 revision get <sys> <rev>              - get a specific revision for a system

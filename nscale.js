@@ -310,6 +310,22 @@ var buildContainer = function(args) {
 
 
 
+var buildAllContainers = function(args) {
+  fetchSys(1, args);
+
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+
+  sdk.buildAllContainers(args._[0], function(err) {
+    if (err) {
+      return quit(err);
+    }
+
+    quit();
+  });
+};
+
+
+
 var listRevisions = function(args) {
 
   fetchSys(1, args);
@@ -659,6 +675,7 @@ program.register('system use', useSystem);
 
 program.register('container list', connect.bind(null, listContainers));
 program.register('container build', connect.bind(null, buildContainer));
+program.register('container buildall', connect.bind(null, buildAllContainers));
 
 program.register('revision list', connect.bind(null, listRevisions));
 program.register('revision get', connect.bind(null, getRevision));
