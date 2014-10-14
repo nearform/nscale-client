@@ -21,6 +21,8 @@ system analyze <sys>                  - run an analysis for this system and
                                         output the results
 system check <sys>                    - run an analysis and check it against the
                                         expected deployed system configuration
+system compile <sys>                  - run a compile of the system description 
+                                        to generate a full system definition
 
 -[ container ]----------
 container list <sys>                  - list all containers in this system
