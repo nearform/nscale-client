@@ -55,7 +55,7 @@ var stderrHandler = function(err) {
     console.log('ERROR: ' + err.message.replace(/\n$/, ''));
   }
   else if (err.stderr) {
-    console.log('ERROR: ' + err.stderr.replace(/\n$/, ''));
+    process.stdout.write(err.stderr);
   }
   else {
     console.log('ERROR: ' + JSON.stringify(err));
@@ -301,7 +301,9 @@ var buildContainer = function(args) {
       return quit(err);
     }
 
-    console.log(response.result);
+    if (response && response.result) {
+      console.log(response.result);
+    }
     quit();
   });
 };
