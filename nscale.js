@@ -275,6 +275,15 @@ var cloneSystem = function(args) {
 
 
 
+var linkSystem = function(args) {
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+  sdk.linkSystem(args._[0], process.cwd(), function(err) {
+    quit(err);
+  });
+};
+
+
+
 var syncSystem = function(args) {
   sdk.ioHandlers(stdoutHandler, stderrHandler);
   sdk.syncSystem(args._[0], function(err, response) {
@@ -650,6 +659,7 @@ program.register('system put', connect.bind(null, putSystem));
 program.register('system create', connect.bind(null, createSystem));
 program.register('system sync', connect.bind(null, syncSystem));
 program.register('system clone', connect.bind(null, cloneSystem));
+program.register('system link', connect.bind(null, linkSystem));
 program.register('system current', connect.bind(null, getDeployed));
 program.register('system analyze', connect.bind(null, analyzeSystem));
 program.register('system check', connect.bind(null, checkSystem));
