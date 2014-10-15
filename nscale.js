@@ -408,12 +408,11 @@ var deployRevision = function(args) {
   fetchSys(2, args);
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.deployRevision(args._[0], args._[1], function(err, result) {
+  sdk.deployRevision(args._[0], args._[1], function(err) {
     if (err) {
       return quit(err);
     }
 
-    console.log(JSON.stringify(result, null, 2));
     quit();
   });
 };
