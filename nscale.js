@@ -121,11 +121,10 @@ function login() {
 
   sdk.connect({host: config.host, port: config.port}, function() {
     sdk.login('', '', function(result) {
-      if (result.user && result.user.token) {
+      if (result && result.user && result.user.token) {
         cfg.setToken(result.user.token);
-        console.log('ok');
       }
-      else {
+      else if (result && result.err) {
         console.log();
         console.log('error: ' + JSON.stringify(result.err));
         console.log();
