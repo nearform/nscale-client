@@ -120,7 +120,7 @@ function login() {
   var config = cfg.getConfig();
 
   sdk.connect({host: config.host, port: config.port}, function() {
-    sdk.login('', '', function(result) {
+    sdk.login('', '', function(err, result) {
       if (result && result.user && result.user.token) {
         cfg.setToken(result.user.token);
       }
