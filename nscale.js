@@ -544,7 +544,6 @@ var fixSystem = function(args) {
 
 var compileSystem = function(args) {
   fetchSys(1, args);
-  console.log('--> compile');
   sdk.ioHandlers(stdoutHandler, stderrHandler);
   sdk.compileSystem(args._[0], args._[1], function(result) {
     console.log(JSON.stringify(result, null, 2));
