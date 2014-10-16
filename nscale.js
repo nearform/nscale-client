@@ -606,16 +606,7 @@ function startServer(args) {
       var log = logDir + '/' + server.replace('nsd-', '') + '.log';
       exec(server + ' -c ' + config + ' > ' + log + ' 2>&1 &',
            { stdio: 'inherit' }, cb);
-    }, function(err) {
-
-      if (err) {
-        console.error('an error occured: ', err);
-        console.error('\ncheck the logs with:');
-        console.error('\tnsd server logs');
-      } else {
-        console.log('nscale servers started');
-      }
-    });
+    }, quit);
   }
 
   // if config is default config then check if it exists, if not then run nsd-init before starting
@@ -646,15 +637,7 @@ function stopServer(args) {
       }
       cb();
     });
-  }, function(err) {
-
-    if (err) {
-      console.error('unable to stop all server processes\n');
-      console.error('error occured: ', err);
-    } else {
-      console.error('nscale servers stopped');
-    }
-  })
+  }, quit)
 }
 
 function logServer(args) {
@@ -702,12 +685,12 @@ program.register('help', showHelp);
 
 
 module.exports = function(argv) {
+  console.log('it worked if it ends with ok');
   var remaining = program.parse(argv);
   if (remaining) {
     console.log('No matching command.');
     return showHelp();
   }
-  console.log('it worked if it ends with ok');
 };
 
 if (require.main === module) {
