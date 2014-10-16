@@ -223,10 +223,10 @@ var createSystem = function() {
               return quit(err);
             }
 
-            if (system.id) {
-              console.log('ok');
+            if (!system.id) {
+              err = new Error('No system id was returner')
             }
-            quit();
+            quit(err);
           });
         }
         else {
