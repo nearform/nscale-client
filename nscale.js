@@ -685,7 +685,6 @@ program.register('help', showHelp);
 
 
 module.exports = function(argv) {
-  console.log('it worked if it ends with ok');
   var remaining = program.parse(argv);
   if (remaining) {
     console.log('No matching command.');
