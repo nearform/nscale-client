@@ -67,10 +67,10 @@ var stderrHandler = function(err) {
 function quit(err) {
   function done() {
     if (err) {
+      console.log('not ok!');
       stderrHandler(err);
       process.exit(1);
     }
-    console.log('ok!');
     process.exit(0);
   }
 
