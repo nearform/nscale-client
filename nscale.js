@@ -543,12 +543,9 @@ var fixSystem = function(args) {
 
 
 var compileSystem = function(args) {
-  fetchSys(1, args);
+  fetchSys(2, args);
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.compileSystem(args._[0], args._[1], function(result) {
-    console.log(JSON.stringify(result, null, 2));
-    quit();
-  });
+  sdk.compileSystem(args._[0], args._[1], quit);
 };
 
 
