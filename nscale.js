@@ -605,7 +605,12 @@ function startServer(args) {
       var log = logDir + '/' + server.replace('nsd-', '') + '.log';
       exec(server + ' -c ' + config + ' > ' + log + ' 2>&1 &',
            { stdio: 'inherit' }, cb);
-    }, quit);
+    }, function(err) {
+      if (!err) {
+        console.log('done!');
+      }
+      quit(err);
+    });
   }
 
   // if config is default config then check if it exists, if not then run nsd-init before starting
@@ -636,7 +641,12 @@ function stopServer(args) {
       }
       cb();
     });
-  }, quit)
+  }, function(err) {
+    if (!err) {
+      console.log('done!')
+    }
+    quit(err)
+  })
 }
 
 function logServer(args) {
