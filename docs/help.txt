@@ -15,6 +15,7 @@ system create                         - create a new blank system
 system clone                          - clone a system from an existing git
                                         remote
 system link <path>                    - link an existing system living at <path>
+system unlink <sys>                   - unlink a system from this instance
 system list                           - list all systems in this instance
 system put                            - put a new revision of the system
 system current <sys>                  - get the deployed revision of this system
