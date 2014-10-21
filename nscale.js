@@ -284,6 +284,7 @@ var linkSystem = function(args) {
 
 
 var unlinkSystem = function(args) {
+  fetchSys(1, args);
   sdk.ioHandlers(stdoutHandler, stderrHandler);
   sdk.unlinkSystem(args._[0], function(err) {
     quit(err);
