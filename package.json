@@ -24,7 +24,7 @@
     "cli-table": "^0.3.0",
     "commist": "^0.2.0",
     "lodash": "^2.4.1",
-    "nscale-sdk": "~0.4.0",
+    "nscale-sdk": "git+https://github.com/nearform/nscale-sdk.git#unlink",
     "prompt": "^0.2.13",
     "shell-quote": "^1.4.2",
     "username": "^1.0.0"

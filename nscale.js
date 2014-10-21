@@ -283,6 +283,16 @@ var linkSystem = function(args) {
 
 
 
+var unlinkSystem = function(args) {
+  fetchSys(1, args);
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+  sdk.unlinkSystem(args._[0], function(err) {
+    quit(err);
+  });
+};
+
+
+
 var syncSystem = function(args) {
   sdk.ioHandlers(stdoutHandler, stderrHandler);
   sdk.syncSystem(args._[0], function(err, response) {
@@ -663,6 +673,7 @@ program.register('system create', connect.bind(null, createSystem));
 program.register('system sync', connect.bind(null, syncSystem));
 program.register('system clone', connect.bind(null, cloneSystem));
 program.register('system link', connect.bind(null, linkSystem));
+program.register('system unlink', connect.bind(null, unlinkSystem));
 program.register('system current', connect.bind(null, getDeployed));
 program.register('system analyze', connect.bind(null, analyzeSystem));
 program.register('system check', connect.bind(null, checkSystem));
