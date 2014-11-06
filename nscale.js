@@ -467,7 +467,7 @@ var previewRevision = function(args) {
     var opsTable = new cliTable({chars: tableChars, style: tableStyle, head: ['Host', 'Command'], colWidths: [20, 150]});
     console.log('operations: ');
     _.each(operations.ops, function(operation) {
-      opsTable.push([operation.host, operation.cmd]);
+      opsTable.push([operation.host || '', operation.cmd || '']);
     });
     console.log(opsTable.toString());
     console.log();
@@ -519,7 +519,7 @@ var checkSystem = function(args) {
       var opsTable = new cliTable({chars: tableChars, style: tableStyle, head: ['Host', 'Command'], colWidths: [20, 150]});
       console.log('operations: ');
       _.each(operations.ops, function(operation) {
-        opsTable.push([operation.host, operation.cmd]);
+        opsTable.push([operation.host || '', operation.cmd || '']);
       });
       console.log(opsTable.toString());
       console.log();
