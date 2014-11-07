@@ -47,7 +47,12 @@ process.on('exit', function() {
 
 
 var stdoutHandler = function(out) {
-  console.log(out.message.replace(/\n$/, ''));
+  if (typeof out.message === 'string') {
+    console.log(out.message.replace(/\n$/, ''));
+  }
+  else {
+    console.log(out.message);
+  }
 };
 
 var stderrHandler = function(err) {
