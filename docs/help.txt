@@ -9,6 +9,7 @@ login                                 - login to the nominated host
 logout                                - logout from the nominated host
 use <host> [port]                     - use the given host and optional port
 help                                  - show this
+version                               - show the version number (also -v)
 
 -[ system ]----------
 system create                         - create a new blank system

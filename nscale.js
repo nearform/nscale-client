@@ -29,6 +29,7 @@ var fetchSys = require('./lib/fetchSys');
 var exec = require('child_process').exec;
 var async = require('async');
 var username = require('username');
+var chalk = require('chalk');
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
 
 var tableChars = { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': '',
@@ -117,6 +118,31 @@ function connect(next, opts) {
 function showHelp() {
   var file = path.join(__dirname, './', 'docs', 'help.txt');
   process.stdout.write(fs.readFileSync(file));
+  quit();
+}
+
+
+function version() {
+  [
+    'nscale/package.json',
+    'nscale/node_modules/nscale-kernel/package.json',
+    './package.json',
+    'nscale/node_modules/nscale-web/package.json',
+    'nscale/node_modules/nscale-api/package.json'
+  ].forEach(function(p) {
+    try {
+      var p = require(p);
+      var tabs = '\t';
+
+      if (p.name.length < 8)
+        tabs += '\t';
+
+      console.log(chalk.green(p.name), tabs, p.version);
+    } catch(err) {
+      // swallow the error, if a package is missing we don't print it
+    }
+  });
+
   quit();
 }
 
@@ -703,11 +729,15 @@ program.register('logout', logout);
 program.register('use', useSystem);
 
 program.register('help', showHelp);
+program.register('version', version);
 
 
 
 module.exports = function(argv) {
   var remaining = program.parse(argv);
+  if (remaining.v) {
+    return version();
+  }
   if (remaining) {
     console.log('No matching command.');
     return showHelp();
