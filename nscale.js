@@ -55,12 +55,18 @@ var stdoutHandler = function(out) {
   }
 };
 
+
 var stderrHandler = function(err) {
   if (err.message) {
     console.log('ERROR: ' + err.message.replace(/\n$/, ''));
   }
   else if (err.stderr) {
-    process.stdout.write(err.stderr);
+    if (_.isObject(err.stderr)) {
+      process.stdout.write(JSON.stringify(err.stderr, null, 2));
+    }
+    else {
+      process.stdout.write(err.stderr);
+    }
   }
   else {
     console.log('ERROR: ' + JSON.stringify(err));
