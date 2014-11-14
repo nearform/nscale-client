@@ -814,10 +814,11 @@ function start(argv) {
   }
 
   var remaining = program.parse(argv);
-  if (remaining.v) {
+
+  if (remaining && remaining.v) {
     return version();
   }
-  if (remaining) {
+  else if (remaining) {
     console.log('No matching command.');
     return showHelp();
   }
