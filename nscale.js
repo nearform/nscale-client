@@ -26,6 +26,7 @@ var sdk = require('nscale-sdk/main')();
 var prompt = require('prompt');
 var cfg = require('./lib/config');
 var fetchSys = require('./lib/fetchSys');
+var compile = require('./lib/compile');
 var exec = require('child_process').exec;
 var async = require('async');
 var username = require('username');
@@ -649,9 +650,7 @@ var fixSystem = function(args) {
 var compileSystem = function(args) {
   insight.track('system', 'compile');
 
-  fetchSys(2, args);
-  sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.compileSystem(args._[0], args._[1], quit);
+  compile(process.cwd(), quit);
 };
 
 
