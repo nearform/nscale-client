@@ -349,7 +349,7 @@ var linkSystem = function(args) {
   insight.track('system', 'link');
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.linkSystem(args._[0], process.cwd(), function(err) {
+  sdk.linkSystem(args._[0] || '.', process.cwd(), function(err) {
     quit(err);
   });
 };
