@@ -200,14 +200,14 @@ var listSystems = function() {
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
   var table = new cliTable({chars: tableChars, style: tableStyle,
-                            head: ['Name', 'Id'], colWidths: [30, 50]});
+                            head: ['Name']});
   sdk.listSystems(function(err, systems) {
     if (err) {
       return quit(err);
     }
 
     _.each(systems, function(system) {
-      table.push([system.name, system.id]);
+      table.push([system.name]);
     });
     console.log(table.toString());
     quit();
