@@ -23,7 +23,7 @@ var fs = require('fs');
 var path = require('path');
 var cliTable = require('cli-table');
 var sdk = require('nscale-sdk/main')();
-var prompt = require('prompt');
+var inquirer = require('inquirer');
 var cfg = require('./lib/config');
 var fetchSys = require('./lib/fetchSys');
 var exec = require('child_process').exec;
@@ -270,37 +270,47 @@ var getDeployed = function(args) {
 var createSystem = function() {
   insight.track('system', 'create');
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  prompt.start();
-  prompt.get(['name'], function(err, r1) {
-    prompt.get(['namespace'], function(err, r2) {
-      if (!r1.name || r1.name.length === 0) {
-        console.log('aborted - you must provide a name');
-        return quit();
+  inquirer.prompt([{
+    type: 'input',
+    name: 'name',
+    message: 'What is the system name?',
+    validate: function(value) {
+      if (value.length < 4) {
+        return 'name is too short, use at least 4 chars';
       }
-      if (!r2.namespace || r2.namespace.length === 0) {
-        console.log('aborted - you must provide a namespace');
-        return quit();
+      return true;
+    }
+  }, {
+    type: 'input',
+    name: 'namespace',
+    message: 'What is the system namespace?',
+    default: function(values) {
+      return values.name;
+    },
+    validate: function(value) {
+      if (value.length < 4) {
+        return 'namespace is too short, use at least 4 chars';
       }
-      console.log('create system: ' + r1.name + ' with namespace: ' + r2.namespace + '?');
-      var key = 'confirm (y/n)';
-      prompt.get([key], function(err, r3) {
-        if (r3[key] === 'y' || r3[key] === 'Y') {
-          sdk.createSystem(r1.name, r2.namespace, process.cwd(), function(err, system) {
-            if (err) {
-              return quit(err);
-            }
+      return true;
+    }
+  }, {
+    type: 'confirm',
+    name: 'confirm',
+    message: function(values) {
+      return 'Confirm creating system "' + values.name + '" with namespace "' + values.namespace + '"?';
+    },
+    default: true
+  }], function(results) {
+    if (!results.confirm) {
+      console.log(chalk.red('aborted'));
+    }
 
-            if (!system.id) {
-              err = new Error('No system id was returner')
-            }
-            quit(err);
-          });
-        }
-        else {
-          console.log('aborted');
-          quit();
-        }
-      });
+    sdk.createSystem(results.name, results.namespace, process.cwd(), function(err, system) {
+      if (!err && system && !system.id) {
+        err = new Error('No system id was returned')
+      }
+
+      quit(err);
     });
   });
 };
