@@ -68,6 +68,7 @@ var stdoutHandler = function(out) {
 
 
 var stderrHandler = function(err) {
+  callbackCalled = true;
   if (err.message) {
     console.log('ERROR: ' + err.message.replace(/\n$/, ''));
   }
@@ -77,6 +78,7 @@ var stderrHandler = function(err) {
     }
     else {
       process.stdout.write(err.stderr);
+      process.stdout.write('\n');
     }
   }
   else {
@@ -87,8 +89,10 @@ var stderrHandler = function(err) {
 
 
 function _quit(err) {
+  var needsError = callbackCalled;
+
   function done() {
-    if (err) {
+    if (err && !needsError) {
       console.log('not ok!');
       stderrHandler(err);
       process.exit(1);
