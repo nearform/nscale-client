@@ -25,7 +25,7 @@ var cliTable = require('cli-table');
 var sdk = require('nscale-sdk/main')();
 var inquirer = require('inquirer');
 var cfg = require('./lib/config');
-var fetchSys = require('./lib/fetchSys');
+var fetcher = require('./lib/fetchSys')();
 var exec = require('child_process').exec;
 var async = require('async');
 var username = require('username');
@@ -34,6 +34,8 @@ var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'H
 var Insight = require('insight');
 
 var pkg = require('./package.json');
+
+var fetchSys = fetcher.fetchSys;
 
 var insight = new Insight({
     // Google Analytics tracking code
@@ -49,6 +51,12 @@ var tableChars = { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': '',
 var tableStyle = { 'padding-left': 0, 'padding-right': 0 };
 var callbackCalled = false;
 process.stdin.setEncoding('utf8');
+
+fetcher.on('error', function(err) {
+  console.log(err.message);
+  callbackCalled = true;
+  process.exit(1)
+});
 
 process.on('exit', function() {
   if (!callbackCalled) {
