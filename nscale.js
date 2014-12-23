@@ -278,6 +278,15 @@ var getDeployed = function(args) {
 };
 
 
+function validateDockerName(value) {
+  if (value.length < 4) {
+    return 'name is too short, use at least 4 chars';
+  }
+  if (value.indexOf('-') >= 0) {
+    return 'namespace cannot contain \'-\'';
+  }
+  return true;
+}
 
 var createSystem = function() {
   insight.track('system', 'create');
@@ -286,12 +295,7 @@ var createSystem = function() {
     type: 'input',
     name: 'name',
     message: 'What is the system name?',
-    validate: function(value) {
-      if (value.length < 4) {
-        return 'name is too short, use at least 4 chars';
-      }
-      return true;
-    }
+    validate: validateDockerName
   }, {
     type: 'input',
     name: 'namespace',
@@ -299,12 +303,7 @@ var createSystem = function() {
     default: function(values) {
       return values.name;
     },
-    validate: function(value) {
-      if (value.length < 4) {
-        return 'namespace is too short, use at least 4 chars';
-      }
-      return true;
-    }
+    validate: validateDockerName
   }, {
     type: 'confirm',
     name: 'confirm',
