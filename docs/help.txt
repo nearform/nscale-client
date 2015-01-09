@@ -35,9 +35,10 @@ container buildall <sys>              - build all containers in this system
 -[ revision ]----------
 revision get <sys> <rev>              - get a specific revision for a system
 revision list <sys>                   - list revision history for this system
-revision deploy <sys> <rev>           - deploy a specific revision of this
-                                        system
+revision deploy <sys> <rev> <target>  - deploy a specific revision of this
+                                        system to the named target
 revision mark <sys> <rev>             - mark a specific revision as deployed
-revision preview <sys> <rev>          - preview the deploy operations for a
-                                        specific revision of this system
+revision preview <sys> <rev> <target> - preview the deploy operations for a
+                                        specific revision of this system to 
+                                        the named target
 

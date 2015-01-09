@@ -233,9 +233,9 @@ var listContainers = function(args) {
   var table = new cliTable({chars: tableChars, style: tableStyle,
                             head: ['Name', 'Type', 'Id', 'Version', 'Dependencies'], colWidths: [20, 15, 50, 15, 70]});
 
-  fetchSys(1, args);
+  fetchSys(2, args);
 
-  sdk.listContainers(args._[0], function(err, containers) {
+  sdk.listContainers(args._[0], args._[1], function(err, containers) {
     if (err) {
       return quit(err);
     }
@@ -265,9 +265,9 @@ var getDeployed = function(args) {
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
 
-  fetchSys(1, args);
+  fetchSys(2, args);
 
-  sdk.getDeployed(args._[0], function(err, system) {
+  sdk.getDeployed(args._[0], args._[1], function(err, system) {
     if (err) {
       return quit(err);
     }
@@ -415,7 +415,7 @@ var buildContainer = function(args) {
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
 
-  sdk.buildContainer(args._[0], args._[1],function(err, response) {
+  sdk.buildContainer(args._[0], args._[1], function(err, response) {
     if (err) {
       return quit(err);
     }
@@ -523,14 +523,13 @@ var listTimeline = function(args) {
 var deployRevision = function(args) {
   insight.track('revision', 'deploy');
 
-  fetchSys(2, args);
+  fetchSys(3, args);
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.deployRevision(args._[0], args._[1], function(err) {
+  sdk.deployRevision(args._[0], args._[1], args._[2], function(err) {
     if (err) {
       return quit(err);
     }
-
     quit();
   });
 };
@@ -558,9 +557,9 @@ var markRevisionDeployed = function(args) {
 var previewRevision = function(args) {
   insight.track('revision', 'preview');
 
-  fetchSys(2, args);
+  fetchSys(3, args);
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.previewRevision(args._[0], args._[1], function(err, operations) {
+  sdk.previewRevision(args._[0], args._[1], args._[2], function(err, operations) {
     if (err) {
       return quit(err);
     }
@@ -591,10 +590,10 @@ var previewRevision = function(args) {
 var analyzeSystem = function(args) {
   insight.track('system', 'analyze');
 
-  fetchSys(1, args);
+  fetchSys(2, args);
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.analyzeSystem(args._[0], function(err, result) {
+  sdk.analyzeSystem(args._[0], args._[1], function(err, result) {
     if (err) {
       return quit(err);
     }
@@ -609,9 +608,9 @@ var analyzeSystem = function(args) {
 var checkSystem = function(args) {
   insight.track('system', 'check');
 
-  fetchSys(1, args);
+  fetchSys(2, args);
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.checkSystem(args._[0], function(err, operations) {
+  sdk.checkSystem(args._[0], args._[1], function(err, operations) {
     if (err) {
       return quit(err);
     }
@@ -652,9 +651,9 @@ var checkSystem = function(args) {
 var fixSystem = function(args) {
   insight.track('system', 'fix');
 
-  fetchSys(1, args);
+  fetchSys(2, args);
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.fixSystem(args._[0], function(err) {
+  sdk.fixSystem(args._[0], args._[1], function(err) {
     if (err) {
       return quit(err);
     }
