@@ -676,6 +676,58 @@ var compileSystem = function(args) {
 
 
 
+var startMonkey = function(args) {
+  fetchSys(2, args);
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+  sdk.startMonkey(args._[0], args._[1], function(err) {
+    if (err) {
+      return quit(err);
+    }
+    quit();
+  });
+};
+
+
+
+var stopMonkey = function(args) {
+  fetchSys(2, args);
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+  sdk.stopMonkey(args._[0], args._[1], function(err) {
+    if (err) {
+      return quit(err);
+    }
+    quit();
+  });
+};
+
+
+
+var startMonitor = function(args) {
+  fetchSys(2, args);
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+  sdk.startMonitor(args._[0], args._[1], function(err) {
+    if (err) {
+      return quit(err);
+    }
+    quit();
+  });
+};
+
+
+
+var stopMonitor = function(args) {
+  fetchSys(2, args);
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+  sdk.stopMonitor(args._[0], args._[1], function(err) {
+    if (err) {
+      return quit(err);
+    }
+    quit();
+  });
+};
+
+
+
 var logout = function() {
   insight.track('logout');
   cfg.clearToken();
@@ -800,6 +852,10 @@ program.register('system analyze', connect.bind(null, analyzeSystem));
 program.register('system check', connect.bind(null, checkSystem));
 program.register('system fix', connect.bind(null, fixSystem));
 program.register('system compile', connect.bind(null, compileSystem));
+program.register('system monkeystart', connect.bind(null, startMonkey));
+program.register('system monkeystop', connect.bind(null, stopMonkey));
+program.register('system monitorstart', connect.bind(null, startMonitor));
+program.register('system monitorstop', connect.bind(null, stopMonitor));
 program.register('system use', useSystem);
 
 program.register('container list', connect.bind(null, listContainers));
