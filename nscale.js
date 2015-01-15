@@ -34,6 +34,7 @@ var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'H
 var Insight = require('insight');
 
 var pkg = require('./package.json');
+var monkey = require('./lib/monkey');
 
 var fetchSys = fetcher.fetchSys;
 
@@ -683,6 +684,8 @@ var startMonkey = function(args) {
     if (err) {
       return quit(err);
     }
+    // this is fun! :)
+    console.log(monkey);
     quit();
   });
 };
