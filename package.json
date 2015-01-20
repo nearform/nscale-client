@@ -33,7 +33,6 @@
   },
   "main": "./nscale.js",
   "bin": {
-    "nsd": "./nscale.js",
     "nscale": "./nscale.js"
   },
   "repository": {
