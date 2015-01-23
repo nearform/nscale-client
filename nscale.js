@@ -432,8 +432,7 @@ var listRevisions = function(args) {
   sdk.ioHandlers(stdoutHandler, stderrHandler);
   var table = new cliTable({chars: tableChars, style: tableStyle,
                             head: ['revision', 'deployed', 'who', 'time', 'description'],
-                            //colWidths: [40, 8, 55, 25, 100]});
-                            colWidths: [20, 8, 55, 25, 50]});
+                            colWidths: [20, 12, 40, 25, 50]});
 
   sdk.listRevisions(args._[0], function(err, revisions) {
     if (err) {
@@ -441,12 +440,7 @@ var listRevisions = function(args) {
     }
 
     _.each(revisions, function(revision){
-      if (revision.deployed) {
-        table.push([revision.id, revision.deployed, revision.author, revision.date, revision.message.trim()]);
-      }
-      else {
-        table.push([revision.id, false, revision.author, revision.date, revision.message.trim()]);
-      }
+      table.push([revision.id, revision.deployedTo || '', revision.author, revision.date, revision.message.trim()]);
     });
     console.log(table.toString());
     quit();
