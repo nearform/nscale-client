@@ -1,30 +1,27 @@
 
--[ server ]----------
+-[ server ]-------------
 server start [config]                 - start the server
 server stop                           - stop the server
 server logs [logfile]                 - tail the server logs
 
--[ login ]----------
+-[ login ]--------------
 login                                 - login to the nominated host
 logout                                - logout from the nominated host
 use <host> [port]                     - use the given host and optional port
 help                                  - show this
 version                               - show the version number (also -v)
 
--[ system ]----------
+-[ system ]-------------
 system create                         - create a new blank system
-system clone                          - clone a system from an existing git
-                                        remote
 system link <path>                    - link an existing system living at <path>
 system unlink <sys>                   - unlink a system from this instance
 system list                           - list all systems in this instance
-system put                            - put a new revision of the system
 system current <sys>                  - get the deployed revision of this system
-system analyze <sys>                  - run an analysis for this system and
+system analyze <sys> <env             - run an analysis for this system and
                                         output the results
 system check <sys>                    - run an analysis and check it against the
                                         expected deployed system configuration
-system compile <sys>                  - run a compile of the system description 
+system compile <sys>                  - run a compile of the system description
                                         to generate a full system definition
 
 -[ container ]----------
@@ -32,13 +29,15 @@ container list <sys>                  - list all containers in this system
 container build <sys> <cont>          - build a specific container
 container buildall <sys>              - build all containers in this system
 
--[ revision ]----------
+-[ revision ]-----------
 revision get <sys> <rev>              - get a specific revision for a system
 revision list <sys>                   - list revision history for this system
-revision deploy <sys> <rev> <target>  - deploy a specific revision of this
-                                        system to the named target
+revision deploy <sys> <rev> <env>     - deploy a specific revision of this
+                                        system to the named environment
 revision mark <sys> <rev>             - mark a specific revision as deployed
-revision preview <sys> <rev> <target> - preview the deploy operations for a
-                                        specific revision of this system to 
-                                        the named target
+revision preview <sys> <rev> <env   > - preview the deploy operations for a
+                                        specific revision of this system to
+                                        the named environment
 
+-[ timeline ]-----------
+timeline list                         - All recored events by nscale in this system
