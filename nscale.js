@@ -480,10 +480,10 @@ var listRevisions = function(args) {
 var getRevision = function(args) {
   insight.track('revision', 'get');
 
-  fetchSys(2, args);
+  fetchSys(3, args);
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.getRevision(args._[0], args._[1], function(err, revisions) {
+  sdk.getRevision(args._[0], args._[1], args._[2], function(err, revisions) {
     if (err) {
       return quit(err);
     }
