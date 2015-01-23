@@ -42,3 +42,5 @@ revision preview <sys> <rev> <target> - preview the deploy operations for a
                                         specific revision of this system to 
                                         the named target
 
+-[ timeline ]-----------
+timeline list                         - All recored events by nscale in this system

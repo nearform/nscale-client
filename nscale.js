@@ -504,6 +504,8 @@ var listTimeline = function(args) {
                             head: ['Timestamp', 'User', 'Action', 'Details'],
                             colWidths: [40, 20, 20, 60]});
 
+  fetchSys(1, args);
+
   sdk.timeline(args._[0], function(err, timeline) {
     if (err) {
       return quit(err);
