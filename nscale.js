@@ -327,28 +327,6 @@ var createSystem = function() {
 };
 
 
-var putSystem = function() {
-  insight.track('system', 'put');
-
-  sdk.ioHandlers(stdoutHandler, stderrHandler);
-  var sys = '';
-  process.stdin.on('readable', function() {
-    sys += process.stdin.read();
-  });
-
-  process.stdin.on('end', function() {
-    sdk.putSystem(sys, function(err, response) {
-      if (err) {
-        return quit(err);
-      }
-
-      console.log(response.result);
-      quit();
-    });
-  });
-};
-
-
 
 var cloneSystem = function(args) {
   insight.track('system', 'clone');
@@ -791,10 +769,7 @@ program.register('server stop', stopServer);
 program.register('server logs', logServer);
 
 program.register('system list', connect.bind(null, listSystems));
-program.register('system put', connect.bind(null, putSystem));
 program.register('system create', connect.bind(null, createSystem));
-program.register('system sync', connect.bind(null, syncSystem));
-program.register('system clone', connect.bind(null, cloneSystem));
 program.register('system link', connect.bind(null, linkSystem));
 program.register('system unlink', connect.bind(null, unlinkSystem));
 program.register('system current', connect.bind(null, getDeployed));
