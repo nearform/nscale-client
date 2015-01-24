@@ -233,9 +233,9 @@ var listContainers = function(args) {
   var table = new cliTable({chars: tableChars, style: tableStyle,
                             head: ['Name', 'Type', 'Id'], colWidths: [20, 20, 50]});
 
-  fetchSys(2, args);
+  fetchSys(1, args);
 
-  sdk.listContainers(args._[0], args._[1], function(err, containers) {
+  sdk.listContainers(args._[0], function(err, containers) {
     if (err) {
       return quit(err);
     }
