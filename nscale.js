@@ -231,7 +231,7 @@ var listContainers = function(args) {
   insight.track('container', 'list');
 
   var table = new cliTable({chars: tableChars, style: tableStyle,
-                            head: ['Name', 'Type', 'Id', 'Version', 'Dependencies'], colWidths: [20, 15, 50, 15, 70]});
+                            head: ['Name', 'Type', 'Id'], colWidths: [20, 20, 50]});
 
   fetchSys(2, args);
 
@@ -240,18 +240,11 @@ var listContainers = function(args) {
       return quit(err);
     }
 
-    var name;
-    var type;
-    var id;
-    var version;
-    var deps;
     _.each(containers, function(container) {
-      name = container.name || '-';
-      type = container.type ||  '-';
-      id = container.id || '-';
-      version = container.version || '';
-      deps = container.dependencies || '';
-      table.push([name, type, id, version, JSON.stringify(deps)]);
+      var name = container.name || '-';
+      var type = container.type ||  '-';
+      var id = container.id || '-';
+      table.push([name, type, id]);
     });
     console.log(table.toString());
     quit();
