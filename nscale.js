@@ -381,11 +381,11 @@ var syncSystem = function(args) {
 var buildContainer = function(args) {
   insight.track('container', 'build');
 
-  fetchSys(2, args);
+  fetchSys(3, args);
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
 
-  sdk.buildContainer(args._[0], args._[1], function(err, response) {
+  sdk.buildContainer(args._[0], args._[1], args._[2] || 'latest', function(err, response) {
     if (err) {
       return quit(err);
     }
@@ -402,11 +402,11 @@ var buildContainer = function(args) {
 var buildAllContainers = function(args) {
   insight.track('container', 'buildall');
 
-  fetchSys(1, args);
+  fetchSys(2, args);
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
 
-  sdk.buildAllContainers(args._[0], function(err) {
+  sdk.buildAllContainers(args._[0], args._[1] || 'latest', function(err) {
     if (err) {
       return quit(err);
     }
