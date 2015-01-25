@@ -36,6 +36,7 @@ var Insight = require('insight');
 var pkg = require('./package.json');
 
 var fetchSys = fetcher.fetchSys;
+var currentSys = require('./lib/fetchSys').currentSys;
 
 var insight = new Insight({
     // Google Analytics tracking code
@@ -226,32 +227,60 @@ var listSystems = function() {
 };
 
 
+var fetchContainerSysRev = function(args) {
+  var sys;
+  var revision;
+  var localSys = currentSys();
+
+  if (args._.length === 0) {
+    sys = localSys;
+    revision = 'latest';
+  } else if (args._.length === 1) {
+    if (!localSys || args._[0] === localSys) {
+      sys = args._[0];
+      revision = 'latest';
+    } else {
+      sys = localSys;
+      revision = args._[0];
+    }
+  } else {
+    sys = args._[0];
+    revision = args._[1];
+  }
+
+  if (!sys) {
+    console.error('please specify a system')
+    quit();
+    return;
+  }
+
+  return {
+    sys: sys,
+    revision: revision
+  }
+};
 
 var listContainers = function(args) {
   insight.track('container', 'list');
 
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
   var table = new cliTable({chars: tableChars, style: tableStyle,
-                            head: ['Name', 'Type', 'Id', 'Version', 'Dependencies'], colWidths: [20, 15, 50, 15, 70]});
+                            head: ['Name', 'Type', 'Id'], colWidths: [20, 20, 50]});
 
-  fetchSys(2, args);
 
-  sdk.listContainers(args._[0], args._[1], function(err, containers) {
+  var sr = fetchContainerSysRev(args);
+  if (!sr) { return; }
+
+  sdk.listContainers(sr.sys, sr.revision, function(err, containers) {
     if (err) {
       return quit(err);
     }
 
-    var name;
-    var type;
-    var id;
-    var version;
-    var deps;
     _.each(containers, function(container) {
-      name = container.name || '-';
-      type = container.type ||  '-';
-      id = container.id || '-';
-      version = container.version || '';
-      deps = container.dependencies || '';
-      table.push([name, type, id, version, JSON.stringify(deps)]);
+      var name = container.name || '-';
+      var type = container.type ||  '-';
+      var id = container.id || '-';
+      table.push([name, type, id]);
     });
     console.log(table.toString());
     quit();
@@ -388,11 +417,42 @@ var syncSystem = function(args) {
 var buildContainer = function(args) {
   insight.track('container', 'build');
 
-  fetchSys(2, args);
+  var sys;
+  var revision;
+  var container;
+  var localSys = currentSys();
+
+  if (args._.length === 0) {
+    console.log('please specify a container, or launch: nscale cont buildall');
+    return quit();
+  } else if (args._.length === 1) {
+    sys = localSys;
+    container = args._[0];
+    revision = 'latest';
+  } else if (args._.length === 2) {
+    if (!localSys || args._[0] === localSys) {
+      sys = args._[0];
+      container = args._[1];
+      revision = 'latest';
+    } else {
+      sys = localSys;
+      container = args._[0];
+      revision = args._[1];
+    }
+  } else if (args._.length === 3) {
+    sys = args._[0];
+    container = args._[1];
+    revision = args._[2];
+  }
+
+  if (!sys) {
+    console.error('please specify a system');
+    return quit();
+  }
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
 
-  sdk.buildContainer(args._[0], args._[1], function(err, response) {
+  sdk.buildContainer(sys, container, revision, function(err, response) {
     if (err) {
       return quit(err);
     }
@@ -409,11 +469,13 @@ var buildContainer = function(args) {
 var buildAllContainers = function(args) {
   insight.track('container', 'buildall');
 
-  fetchSys(1, args);
+  var sr = fetchContainerSysRev(args);
+
+  if (!sr) { return }
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
 
-  sdk.buildAllContainers(args._[0], function(err) {
+  sdk.buildAllContainers(sr.sys, sr.revision, function(err) {
     if (err) {
       return quit(err);
     }
