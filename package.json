@@ -9,7 +9,7 @@
     "line",
     "client"
   ],
-  "version": "0.14.2",
+  "version": "0.14.3",
   "license": "Artistic License 2.0",
   "author": "Peter Elger (http://nearform.com/)",
   "contributors": [
@@ -27,7 +27,7 @@
     "inquirer": "^0.8.0",
     "insight": "^0.4.3",
     "lodash": "^2.4.1",
-    "nscale-sdk": "0.14.1",
+    "nscale-sdk": "0.14.2",
     "shell-quote": "^1.4.2",
     "username": "^1.0.0"
   },
