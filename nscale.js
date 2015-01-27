@@ -56,7 +56,7 @@ process.stdin.setEncoding('utf8');
 fetcher.on('error', function(err) {
   console.log(err.message);
   callbackCalled = true;
-  process.exit(1)
+  process.exit(1);
 });
 
 process.on('exit', function() {
@@ -68,7 +68,9 @@ process.on('exit', function() {
 
 var stdoutHandler = function(out) {
   if (typeof out.message === 'string') {
-    console.log(out.message.replace(/\n$/, ''));
+    if (out.message.length > 2) {
+      console.log(out.message.replace(/\n+$/, ''));
+    }
   }
   else {
     console.log(out.message);
@@ -79,7 +81,7 @@ var stdoutHandler = function(out) {
 var stderrHandler = function(err) {
   callbackCalled = true;
   if (err.message) {
-    console.log('ERROR: ' + err.message.replace(/\n$/, ''));
+    console.log('ERROR: ' + err.message.replace(/\n+$/, ''));
   }
   else if (err.stderr) {
     if (_.isObject(err.stderr)) {
