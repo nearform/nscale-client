@@ -707,7 +707,7 @@ var fixSystem = function(args) {
 var compileSystem = function(args) {
   insight.track('system', 'compile');
 
-  fetchSys(2, args);
+  fetchSys(1, args);
   sdk.ioHandlers(stdoutHandler, stderrHandler);
   sdk.compileSystem(args._[0], quit);
 };
