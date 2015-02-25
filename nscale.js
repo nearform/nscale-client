@@ -423,6 +423,7 @@ var buildContainer = function(args) {
   var revision;
   var container;
   var localSys = currentSys();
+  var target;
 
   if (args._.length === 0) {
     console.log('please specify a container, or launch: nscale cont buildall');
@@ -431,6 +432,7 @@ var buildContainer = function(args) {
     sys = localSys;
     container = args._[0];
     revision = 'latest';
+    target = 'alltargets';
   } else if (args._.length === 2) {
     if (!localSys || args._[0] === localSys) {
       sys = args._[0];
@@ -441,10 +443,24 @@ var buildContainer = function(args) {
       container = args._[0];
       revision = args._[1];
     }
+    target = 'alltargets';
   } else if (args._.length === 3) {
+    if (!localSys || args._[0] === localSys) {
+      sys = args._[0];
+      container = args._[1];
+      revision = args._[2];
+      target = 'alltargets';
+    } else {
+      sys = localSys;
+      container = args._[0];
+      revision = args._[1];
+      target = args._[2];
+    }
+  } else if (args._.length === 4) {
     sys = args._[0];
     container = args._[1];
     revision = args._[2];
+    target = args._[3];
   }
 
   if (!sys) {
@@ -454,7 +470,7 @@ var buildContainer = function(args) {
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
 
-  sdk.buildContainer(sys, container, revision, function(err, response) {
+  sdk.buildContainer(sys, container, revision, target, function(err, response) {
     if (err) {
       return quit(err);
     }
@@ -471,19 +487,49 @@ var buildContainer = function(args) {
 var buildAllContainers = function(args) {
   insight.track('container', 'buildall');
 
-  var sr = fetchContainerSysRev(args);
+  var sys;
+  var revision;
+  var localSys = currentSys();
+  var target;
 
-  if (!sr) { return }
+  if (args._.length === 0) {
+    sys = localSys;
+    revision = 'latest';
+    target = 'alltargets';
+  } else if (args._.length === 1) {
+    if (!localSys || args._[0] === localSys) {
+      sys = args._[0];
+      revision = 'latest';
+    } else {
+      sys = localSys;
+      revision = args._[0];
+    }
+    target = 'alltargets';
+  } else if (args._.length === 2) {
+    if (!localSys || args._[0] === localSys) {
+      sys = args._[0];
+      revision = args._[1];
+      target = 'alltargets';
+    } else {
+      sys = localSys;
+      revision = args._[0];
+      target = args._[1];
+    }
+  } else {
+    sys = args._[0];
+    revision = args._[1];
+    target = args._[2];
+  }
+
+  if (!sys) {
+    console.error('please specify a system')
+    quit();
+    return;
+  }
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
 
-  sdk.buildAllContainers(sr.sys, sr.revision, function(err) {
-    if (err) {
-      return quit(err);
-    }
-
-    quit();
-  });
+  sdk.buildAllContainers(sys, revision, target, quit);
 };
 
 
