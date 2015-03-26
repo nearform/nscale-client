@@ -169,8 +169,6 @@ function version() {
     'nscale/package.json',
     'nscale/node_modules/nscale-kernel/package.json',
     './package.json',
-    'nscale/node_modules/nscale-web/package.json',
-    'nscale/node_modules/nscale-api/package.json'
   ].forEach(function(p) {
     try {
       var p = require(p);
@@ -795,9 +793,7 @@ function startServer(args) {
   var stat;
 
   var servers = [
-    'nsd-server',
-    'nsd-api',
-    'nsd-web'
+    'nscale-server'
   ];
 
   if (fs.existsSync('/var/run/docker.sock')) {
@@ -813,7 +809,7 @@ function startServer(args) {
     var logDir = nscaleRoot + '/log';
 
     async.eachSeries(servers, function(server, cb) {
-      var log = logDir + '/' + server.replace('nsd-', '') + '.log';
+      var log = logDir + '/' + server.replace('nscale-', '') + '.log';
       exec(server + ' -c ' + config + ' > ' + log + ' 2>&1 &',
            { stdio: 'inherit' }, cb);
     }, function(err) {
@@ -824,9 +820,9 @@ function startServer(args) {
     });
   }
 
-  // if config is default config then check if it exists, if not then run nsd-init before starting
+  // if config is default config then check if it exists, if not then run nscale-init before starting
   if (config === nscaleRoot + '/config/config.json' && (!fs.existsSync(config)) ) {
-    var initProcess = exec('nsd-init');
+    var initProcess = exec('nscale-init');
     initProcess.on('exit', start);
   }
   else {
@@ -839,9 +835,7 @@ function stopServer(args) {
   console.log('nscale servers stopping..');
 
   var servers = [
-    'nscale-kernel',
-    'nscale-api',
-    'nscale-web'
+    'nscale-kernel'
   ];
 
   async.eachSeries(servers, function(server, cb) {
