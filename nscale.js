@@ -30,6 +30,8 @@ var exec = require('child_process').exec;
 var async = require('async');
 var username = require('username');
 var chalk = require('chalk');
+var running = require('is-running');
+var portscanner = require('portscanner');
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
 var Insight = require('insight');
 
@@ -64,6 +66,7 @@ process.on('exit', function() {
     throw new Error('callback not called');
   }
 });
+
 
 
 var stdoutHandler = function(out) {
@@ -808,16 +811,73 @@ function startServer(args) {
   function start() {
     var logDir = nscaleRoot + '/log';
 
-    async.eachSeries(servers, function(server, cb) {
+    function launch(server, cb) {
       var log = logDir + '/' + server.replace('nscale-', '') + '.log';
-      exec(server + ' -c ' + config + ' > ' + log + ' 2>&1 &',
-           { stdio: 'inherit' }, cb);
-    }, function(err) {
-      if (!err) {
-        console.log('done!');
+      var cmd = 'exec ' + server + ' -c ' + config + ' > ' + log + ' 2>&1';
+      var child = exec(cmd, { stdio: 'inherit' }, function(err, stdout, stderr) {
+        if (err) { cb(err); }
+      });
+      cb(null, child);
+    };
+
+    /*  
+      return a status object that looks like this:
+      {running: true, listening: true}
+    */
+    function checkServerStatus(server, cb) {
+      var result = {};
+      var pidFile = path.join(nscaleRoot, 'data', '.' + server);
+      
+      if (fs.existsSync(pidFile)) {
+        var pid = Number(fs.readFileSync(pidFile));
+        var port = JSON.parse(fs.readFileSync(config)).modules.protocol.specific.port || 3223;
+        var host = 'localhost';
+
+        running(pid, function(err, running) {
+          if (err) { cb(err); }
+          result.running = running;
+          portscanner.checkPortStatus(port, host, function(err, status) {
+            result.listening = (status == 'open') ? true : false;
+            cb(null, result);
+          });
+        });
       }
+      else { cb(null, result); }
+    }
+
+    function onNextServer(server, cb) {
+      checkServerStatus(server, function(err, status) {
+        if (err) cb(err);
+        if (!(status.running || status.listening)) {
+          launch(server, function(err, child) {
+            if (err) { cb(err); }
+            var interval = setInterval(function() {
+              checkServerStatus(server, function(err, status) {
+                if (status.running && status.listening) {
+                  clearInterval(interval);
+                  cb(null, status);
+                }
+              });
+            }, 200);
+            setTimeout(function() {
+              clearInterval(interval);
+              cb(Error('Server is taking longer that usual'));
+            }, 10000);
+          });
+        }
+        else {
+          console.log('server already running');
+          cb(null, status);
+        }
+      });
+    }
+
+    function onComplete(err, result) {
+      if (!err) { console.log('done'); }
       quit(err);
-    });
+    };
+
+    async.eachSeries(servers, onNextServer, onComplete);
   }
 
   // if config is default config then check if it exists, if not then run nscale-init before starting
@@ -831,27 +891,34 @@ function startServer(args) {
 }
 
 function stopServer(args) {
-  insight.track('server', 'start');
+  insight.track('server', 'stop');
   console.log('nscale servers stopping..');
 
   var servers = [
-    'nscale-kernel'
+    'nscale-server'
   ];
 
-  async.eachSeries(servers, function(server, cb) {
-    var command = 'ps aux | grep -v grep | grep -E \'' + server + '\' | awk \'{print $2}\' | xargs kill ';
-    exec(command, { stdio: 'inherit' }, function(err, data) {
-      if (err && !err.message.match(/No such process/)) {
-        return cb(err);
-      }
-      cb();
-    });
-  }, function(err) {
-    if (!err) {
-      console.log('done!')
+  function onNextServer(server, cb) {
+    var pidFile = path.join(nscaleRoot, 'data', '.' + server);
+    if (fs.existsSync(pidFile)) {
+      var pid = Number(fs.readFileSync(pidFile));
+      var cmd = 'kill ' + pid;
     }
-    quit(err)
-  })
+    else { 
+      cmd = 'ps aux | grep -v grep | grep -E \'' + server + '\' | awk \'{print $2}\' | xargs kill ';
+    }
+    exec(cmd, { stdio: 'inherit' }, function(err, data) {
+      if (err) { cb(err); }
+      cb(null);
+    });
+  }
+
+  function onComplete(err) {
+    if (!err) {console.log('done!'); }
+    quit(err);
+  }
+  
+  async.eachSeries(servers, onNextServer, onComplete);
 }
 
 function logServer(args) {
