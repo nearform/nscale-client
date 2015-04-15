@@ -31,6 +31,7 @@ var async = require('async');
 var username = require('username');
 var chalk = require('chalk');
 var running = require('is-running');
+var launcher = require('./lib/launcher')();
 var portscanner = require('portscanner');
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
 var Insight = require('insight');
@@ -792,102 +793,16 @@ function startServer(args) {
   insight.track('server', 'start');
   console.log('nscale servers starting..');
 
-  var config = args._[0] || nscaleRoot + '/config/config.json';
-  var stat;
+  var config = nscaleRoot + '/config/config.json';
 
   var servers = [
-    'nscale-server'
+    'nscale-kernel'
   ];
-
-  if (fs.existsSync('/var/run/docker.sock')) {
-    stat = fs.statSync('/var/run/docker.sock')
-    if (process.getgroups().indexOf(stat.gid) === -1 && process.getuid() !== stat.uid) {
-      console.error('unable to read and write /var/run/docker.sock, to fix run:');
-      console.error('\tsudo usermod -G docker -a', username.sync());
-      process.exit(1);
-    }
-  }
-
-  function start() {
-    var logDir = nscaleRoot + '/log';
-
-    function launch(server, cb) {
-      var log = logDir + '/' + server.replace('nscale-', '') + '.log';
-      var cmd = 'exec ' + server + ' -c ' + config + ' > ' + log + ' 2>&1';
-      var child = exec(cmd, { stdio: 'inherit' }, function(err, stdout, stderr) {
-        if (err) { cb(err); }
-      });
-      cb(null, child);
-    };
-
-    /*  
-      return a status object that looks like this:
-      {running: true, listening: true}
-    */
-    function checkServerStatus(server, cb) {
-      var result = {};
-      var pidFile = path.join(nscaleRoot, 'data', '.' + server);
-      
-      if (fs.existsSync(pidFile)) {
-        var pid = Number(fs.readFileSync(pidFile));
-        var port = JSON.parse(fs.readFileSync(config)).modules.protocol.specific.port || 3223;
-        var host = 'localhost';
-
-        running(pid, function(err, running) {
-          if (err) { cb(err); }
-          result.running = running;
-          portscanner.checkPortStatus(port, host, function(err, status) {
-            result.listening = (status == 'open') ? true : false;
-            cb(null, result);
-          });
-        });
-      }
-      else { cb(null, result); }
-    }
-
-    function onNextServer(server, cb) {
-      checkServerStatus(server, function(err, status) {
-        if (err) cb(err);
-        if (!(status.running || status.listening)) {
-          launch(server, function(err, child) {
-            if (err) { cb(err); }
-            var interval = setInterval(function() {
-              checkServerStatus(server, function(err, status) {
-                if (status.running && status.listening) {
-                  clearInterval(interval);
-                  cb(null, status);
-                }
-              });
-            }, 200);
-            setTimeout(function() {
-              clearInterval(interval);
-              cb(Error('Server is taking longer that usual'));
-            }, 10000);
-          });
-        }
-        else {
-          console.log('server already running');
-          cb(null, status);
-        }
-      });
-    }
-
-    function onComplete(err, result) {
-      if (!err) { console.log('done'); }
-      quit(err);
-    };
-
-    async.eachSeries(servers, onNextServer, onComplete);
-  }
-
-  // if config is default config then check if it exists, if not then run nscale-init before starting
-  if (config === nscaleRoot + '/config/config.json' && (!fs.existsSync(config)) ) {
-    var initProcess = exec('nscale-init');
-    initProcess.on('exit', start);
-  }
-  else {
-    start();
-  }
+  
+  launcher.start(config, servers, function(err) {
+    if (!err) { console.log('server successfully started')); }
+    quit(err);
+  });
 }
 
 function stopServer(args) {
@@ -895,30 +810,13 @@ function stopServer(args) {
   console.log('nscale servers stopping..');
 
   var servers = [
-    'nscale-server'
+    'nscale-kernel'
   ];
 
-  function onNextServer(server, cb) {
-    var pidFile = path.join(nscaleRoot, 'data', '.' + server);
-    if (fs.existsSync(pidFile)) {
-      var pid = Number(fs.readFileSync(pidFile));
-      var cmd = 'kill ' + pid;
-    }
-    else { 
-      cmd = 'ps aux | grep -v grep | grep -E \'' + server + '\' | awk \'{print $2}\' | xargs kill ';
-    }
-    exec(cmd, { stdio: 'inherit' }, function(err, data) {
-      if (err) { cb(err); }
-      cb(null);
-    });
-  }
-
-  function onComplete(err) {
-    if (!err) {console.log('done!'); }
+  launcher.stop(servers, function(err) {
+    if (!err) { console.log('done!'); }
     quit(err);
-  }
-  
-  async.eachSeries(servers, onNextServer, onComplete);
+  })
 }
 
 function logServer(args) {
