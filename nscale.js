@@ -793,16 +793,11 @@ function startServer(args) {
   insight.track('server', 'start');
   console.log('nscale servers starting..');
 
-  var config = nscaleRoot + '/config/config.json';
-
   var servers = [
     'nscale-kernel'
   ];
   
-  launcher.start(config, servers, function(err) {
-    if (!err) { console.log('server successfully started')); }
-    quit(err);
-  });
+  launcher.start(servers, quit);
 }
 
 function stopServer(args) {
@@ -813,16 +808,15 @@ function stopServer(args) {
     'nscale-kernel'
   ];
 
-  launcher.stop(servers, function(err) {
-    if (!err) { console.log('done!'); }
-    quit(err);
-  })
+  launcher.stop(servers, quit);
 }
 
 function logServer(args) {
+  console.log('server logs!!!');
   insight.track('server', 'logs');
   var logDir = nscaleRoot + '/log';
-  var logfile = args[2] || 'server.log';
+  var logfile = args[2] || 'kernel.log';
+  console.log('tail -n 100 -f ' + logDir + '/' + logfile);
   var logProcess = exec('tail -n 100 -f ' + logDir + '/' + logfile);
   logProcess.stdout.pipe(process.stdout);
 }
