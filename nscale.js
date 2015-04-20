@@ -812,7 +812,6 @@ function stopServer(args) {
 }
 
 function logServer(args) {
-  console.log('server logs!!!');
   insight.track('server', 'logs');
   var logDir = nscaleRoot + '/log';
   var logfile = args[2] || 'kernel.log';
