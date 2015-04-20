@@ -1,8 +1,9 @@
 
 -[ server ]-------------
-server start [config]                   - start the server
-server stop                             - stop the server
-server logs [logfile]                   - tail the server logs
+start                                   - start the server
+stop                                    - stop the server
+status                                  - show current status of the server
+logs [logfile]                          - tail the server logs
 
 -[ login ]--------------
 login                                   - login to the nominated host
