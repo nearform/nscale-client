@@ -31,7 +31,7 @@ var async = require('async');
 var username = require('username');
 var chalk = require('chalk');
 var running = require('is-running');
-var launcher = require('./lib/launcher')();
+var serverController = require('./lib/serverController')();
 var portscanner = require('portscanner');
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
 var Insight = require('insight');
@@ -797,7 +797,7 @@ function startServer(args) {
     'nscale-kernel'
   ];
   
-  launcher.start(servers, quit);
+  serverController.start(servers, quit);
 }
 
 function stopServer(args) {
@@ -808,7 +808,7 @@ function stopServer(args) {
     'nscale-kernel'
   ];
 
-  launcher.stop(servers, quit);
+  serverController.stop(servers, quit);
 }
 
 function logServer(args) {
