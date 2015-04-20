@@ -813,7 +813,7 @@ function stopServer(args) {
 
 function serverStatus() {
   var servers = [
-  'nscale-kernel'
+    'nscale-kernel'
   ];
 
   function onNextServer(server, cb) {
@@ -835,9 +835,13 @@ function logServer(args) {
   logProcess.stdout.pipe(process.stdout);
 }
 
+program.register('server start', startServer);
 program.register('start', startServer);
+program.register('server stop', stopServer);
 program.register('stop', stopServer);
+program.register('server logs', logServer);
 program.register('logs', logServer);
+program.register('server status', serverStatus);
 program.register('status', serverStatus);
 
 program.register('system list', connect.bind(null, listSystems));
