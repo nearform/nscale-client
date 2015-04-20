@@ -837,7 +837,7 @@ function logServer(args) {
 
 program.register('start', startServer);
 program.register('stop', stopServer);
-program.register('server logs', logServer);
+program.register('logs', logServer);
 program.register('status', serverStatus);
 
 program.register('system list', connect.bind(null, listSystems));
