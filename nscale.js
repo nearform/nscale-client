@@ -816,7 +816,6 @@ function logServer(args) {
   insight.track('server', 'logs');
   var logDir = nscaleRoot + '/log';
   var logfile = args[2] || 'kernel.log';
-  console.log('tail -n 100 -f ' + logDir + '/' + logfile);
   var logProcess = exec('tail -n 100 -f ' + logDir + '/' + logfile);
   logProcess.stdout.pipe(process.stdout);
 }
