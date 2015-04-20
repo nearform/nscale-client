@@ -811,6 +811,22 @@ function stopServer(args) {
   serverController.stop(servers, quit);
 }
 
+function serverStatus() {
+  var servers = [
+  'nscale-kernel'
+  ];
+
+  function onNextServer(server, cb) {
+    serverController.serverStatus(server, function(err, status) {
+      if (err) { cb(err); }
+      console.log(server, status);
+      cb(null);
+    });
+  }
+
+  async.eachSeries(servers, onNextServer, quit);
+}
+
 function logServer(args) {
   insight.track('server', 'logs');
   var logDir = nscaleRoot + '/log';
@@ -819,9 +835,10 @@ function logServer(args) {
   logProcess.stdout.pipe(process.stdout);
 }
 
-program.register('server start', startServer);
-program.register('server stop', stopServer);
+program.register('start', startServer);
+program.register('stop', stopServer);
 program.register('server logs', logServer);
+program.register('status', serverStatus);
 
 program.register('system list', connect.bind(null, listSystems));
 program.register('system create', connect.bind(null, createSystem));
