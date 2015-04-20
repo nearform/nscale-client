@@ -14,7 +14,8 @@
   "author": "Peter Elger (http://nearform.com/)",
   "contributors": [
     "Peter Elger <elger.peter@gmail.com> (http://peterelger.com/)",
-    "Matteo Collina <matteo.collina@nearform.com>"
+    "Matteo Collina <matteo.collina@nearform.com>",
+    "Darragh Hayes <darragh.hayes@nearform.com>"
   ],
   "engines": {
     "node": "*"
@@ -29,7 +30,10 @@
     "lodash": "^2.4.1",
     "nscale-sdk": "0.14.4",
     "shell-quote": "^1.4.2",
-    "username": "^1.0.0"
+    "portscanner": "^1.0.0",
+    "is-running": "^1.0.5",
+    "username": "^1.0.0",
+    "nearform-terminal-logo": "^1.1.0"
   },
   "main": "./nscale.js",
   "bin": {

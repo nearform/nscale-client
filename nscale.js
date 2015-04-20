@@ -30,6 +30,9 @@ var exec = require('child_process').exec;
 var async = require('async');
 var username = require('username');
 var chalk = require('chalk');
+var running = require('is-running');
+var serverController = require('./lib/serverController')();
+var portscanner = require('portscanner');
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
 var Insight = require('insight');
 
@@ -64,6 +67,7 @@ process.on('exit', function() {
     throw new Error('callback not called');
   }
 });
+
 
 
 var stdoutHandler = function(out) {
@@ -789,75 +793,29 @@ function startServer(args) {
   insight.track('server', 'start');
   console.log('nscale servers starting..');
 
-  var config = args._[0] || nscaleRoot + '/config/config.json';
-  var stat;
-
   var servers = [
-    'nscale-server'
+    'nscale-kernel'
   ];
-
-  if (fs.existsSync('/var/run/docker.sock')) {
-    stat = fs.statSync('/var/run/docker.sock')
-    if (process.getgroups().indexOf(stat.gid) === -1 && process.getuid() !== stat.uid) {
-      console.error('unable to read and write /var/run/docker.sock, to fix run:');
-      console.error('\tsudo usermod -G docker -a', username.sync());
-      process.exit(1);
-    }
-  }
-
-  function start() {
-    var logDir = nscaleRoot + '/log';
-
-    async.eachSeries(servers, function(server, cb) {
-      var log = logDir + '/' + server.replace('nscale-', '') + '.log';
-      exec(server + ' -c ' + config + ' > ' + log + ' 2>&1 &',
-           { stdio: 'inherit' }, cb);
-    }, function(err) {
-      if (!err) {
-        console.log('done!');
-      }
-      quit(err);
-    });
-  }
-
-  // if config is default config then check if it exists, if not then run nscale-init before starting
-  if (config === nscaleRoot + '/config/config.json' && (!fs.existsSync(config)) ) {
-    var initProcess = exec('nscale-init');
-    initProcess.on('exit', start);
-  }
-  else {
-    start();
-  }
+  
+  serverController.start(servers, quit);
 }
 
 function stopServer(args) {
-  insight.track('server', 'start');
+  insight.track('server', 'stop');
   console.log('nscale servers stopping..');
 
   var servers = [
     'nscale-kernel'
   ];
 
-  async.eachSeries(servers, function(server, cb) {
-    var command = 'ps aux | grep -v grep | grep -E \'' + server + '\' | awk \'{print $2}\' | xargs kill ';
-    exec(command, { stdio: 'inherit' }, function(err, data) {
-      if (err && !err.message.match(/No such process/)) {
-        return cb(err);
-      }
-      cb();
-    });
-  }, function(err) {
-    if (!err) {
-      console.log('done!')
-    }
-    quit(err)
-  })
+  serverController.stop(servers, quit);
 }
 
 function logServer(args) {
+  console.log('server logs!!!');
   insight.track('server', 'logs');
   var logDir = nscaleRoot + '/log';
-  var logfile = args[2] || 'server.log';
+  var logfile = args[2] || 'kernel.log';
   var logProcess = exec('tail -n 100 -f ' + logDir + '/' + logfile);
   logProcess.stdout.pipe(process.stdout);
 }
