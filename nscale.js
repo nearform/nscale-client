@@ -820,6 +820,9 @@ function serverStatus() {
     serverController.serverStatus(server, function(err, status) {
       if (err) { cb(err); }
       console.log(server, status);
+      if (!status.running && status.listening) {
+        console.log('Another service is running on the ' + server.replace('nscale-', '') + ' port - please check', nscaleRoot + '/config/config.json\n');
+      }
       cb(null);
     });
   }
