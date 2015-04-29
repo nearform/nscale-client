@@ -137,24 +137,34 @@ function quit(err) {
 
 
 function connect(next, opts) {
-  var config = cfg.getConfig();
+  var server = 'nscale-kernel';
 
-  sdk.on('error', function(err) {
-    console.error('Server disconnected with an error:');
-    quit(err);
-  });
+  serverController.serverStatus(server, function(err, status) {
+    if (err) { quit(err); }
+    if (status.running && status.listening) {
+      var config = cfg.getConfig();
 
-  // Server shouldn't disconnect before we do, and after we disconnect we
-  // `process.exit`, so if it does it's an error condition.
-  sdk.on('end', function() {
-    quit(new Error('Server disconnected abruptly.'));
-  });
+      sdk.on('error', function(err) {
+        console.error('Server disconnected with an error:');
+        quit(err);
+      });
 
-  sdk.connect({host: config.host, port: config.port, token: config.token}, function(err) {
-    if (err) {
-      quit(err);
+      // Server shouldn't disconnect before we do, and after we disconnect we
+      // `process.exit`, so if it does it's an error condition.
+      sdk.on('end', function() {
+        quit(new Error('Server disconnected abruptly.'));
+      });
+
+      sdk.connect({host: config.host, port: config.port, token: config.token}, function(err) {
+        if (err) {
+          quit(err);
+        }
+        next(opts);
+      });
     }
-    next(opts);
+    else {
+      quit(Error(server + ' is not running - use ' + chalk.green('`nscale start`') + ' first'));
+    }
   });
 }
 
@@ -194,20 +204,17 @@ function version() {
 function login() {
   insight.track('login');
 
-  var config = cfg.getConfig();
-
-  sdk.connect({host: config.host, port: config.port}, function() {
-    sdk.login('', '', function(err, result) {
-      if (result && result.user && result.user.token) {
-        cfg.setToken(result.user.token);
-      }
-      else if (result && result.err) {
-        console.log();
-        console.log('error: ' + JSON.stringify(result.err));
-        console.log();
-      }
-      quit();
-    });
+  sdk.login('', '', function(err, result) {
+    if (result && result.user && result.user.token) {
+      cfg.setToken(result.user.token);
+      console.log('done');
+    }
+    else if (result && result.err) {
+      console.log();
+      console.log('error: ' + JSON.stringify(result.err));
+      console.log();
+    }
+    quit();
   });
 }
 
@@ -765,7 +772,7 @@ var compileSystem = function(args) {
 var logout = function() {
   insight.track('logout');
   cfg.clearToken();
-  process.exit(0);
+  quit();
 };
 
 
@@ -786,7 +793,7 @@ var useSystem = function(args) {
     config = cfg.getConfig();
     console.log('using: ' + config.host + ' ' + config.port);
   }
-  process.exit(0);
+  quit();
 };
 
 function startServer(args) {
@@ -812,6 +819,8 @@ function stopServer(args) {
 }
 
 function serverStatus() {
+  insight.track('server', 'status');
+
   var servers = [
     'nscale-kernel'
   ];
@@ -870,7 +879,7 @@ program.register('revision preview', connect.bind(null, previewRevision));
 
 program.register('timeline list', connect.bind(null, listTimeline));
 
-program.register('login', login);
+program.register('login', connect.bind(null, login));
 program.register('logout', logout);
 program.register('use', useSystem);
 
