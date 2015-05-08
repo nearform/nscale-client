@@ -141,7 +141,7 @@ function connect(next, opts) {
 
   serverController.serverStatus(server, function(err, status) {
     if (err) { quit(err); }
-    if (status.running && status.listening) {
+    if (status.listening) {
       var config = cfg.getConfig();
 
       sdk.on('error', function(err) {
