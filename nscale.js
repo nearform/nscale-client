@@ -140,8 +140,9 @@ function connect(next, opts) {
   var server = 'nscale-kernel';
 
   serverController.serverStatus(server, function(err, status) {
-    if (err) { quit(err); }
-    if (status.listening) {
+    if (err) { return quit(err); }
+
+    if (status.running) {
       var config = cfg.getConfig();
 
       sdk.on('error', function(err) {
