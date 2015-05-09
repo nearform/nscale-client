@@ -763,10 +763,10 @@ var compileSystem = function(args) {
   insight.track('system', 'compile');
 
   fetchSys(1, args);
-  var comment = args._[1] || 'system compile';
+  var message = args.m || args.message || 'system compile';
 
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.compileSystem(args._[0], comment, quit);
+  sdk.compileSystem(args._[0], message, quit);
 };
 
 
