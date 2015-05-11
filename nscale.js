@@ -760,6 +760,25 @@ var fixSystem = function(args) {
 
 
 
+var stopSystem = function(args) {
+  insight.track('system', 'stop');
+
+  fetchSys(2, args);
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+  sdk.stopSystem(args._[0], args._[1], function(err) {
+    if (err) {
+      return quit(err);
+    }
+
+    console.log();
+    console.log('Stop completed, run \'system check\' to confirm');
+    console.log();
+    quit();
+  });
+};
+
+
+
 var compileSystem = function(args) {
   insight.track('system', 'compile');
 
@@ -867,6 +886,7 @@ program.register('system current', connect.bind(null, getDeployed));
 program.register('system analyze', connect.bind(null, analyzeSystem));
 program.register('system check', connect.bind(null, checkSystem));
 program.register('system fix', connect.bind(null, fixSystem));
+program.register('system stop', connect.bind(null, stopSystem));
 program.register('system compile', connect.bind(null, compileSystem));
 program.register('system use', useSystem);
 
