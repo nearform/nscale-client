@@ -142,30 +142,35 @@ function connect(next, opts) {
   serverController.serverStatus(server, function(err, status) {
     if (err) { return quit(err); }
 
-    if (status.running) {
-      var config = cfg.getConfig();
+    // we don't check here the status, as the server might be
+    // started from a different folder, using the nscale-kernel executable
 
-      sdk.on('error', function(err) {
-        console.error('Server disconnected with an error:');
+    var config = cfg.getConfig();
+
+    sdk.on('error', function(err) {
+      // if the server is not running or listening
+      // then it's not running
+      if (!status.running || !status.listening) {
+        console.log(server + ' seems not running - use ' + chalk.green('`nscale start`') + ' first');
+        return quit();
+      }
+      console.error('Server disconnected with an error:');
+      quit(err);
+    });
+
+    // Server shouldn't disconnect before we do, and after we disconnect we
+    // `process.exit`, so if it does it's an error condition.
+    sdk.on('end', function() {
+      quit(new Error('Server disconnected abruptly.'));
+    });
+
+    sdk.connect({host: config.host, port: config.port, token: config.token}, function(err) {
+      if (err) {
         quit(err);
-      });
+      }
 
-      // Server shouldn't disconnect before we do, and after we disconnect we
-      // `process.exit`, so if it does it's an error condition.
-      sdk.on('end', function() {
-        quit(new Error('Server disconnected abruptly.'));
-      });
-
-      sdk.connect({host: config.host, port: config.port, token: config.token}, function(err) {
-        if (err) {
-          quit(err);
-        }
-        next(opts);
-      });
-    }
-    else {
-      quit(Error(server + ' is not running - use ' + chalk.green('`nscale start`') + ' first'));
-    }
+      next(opts);
+    });
   });
 }
 
