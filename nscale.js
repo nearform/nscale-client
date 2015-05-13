@@ -765,6 +765,30 @@ var fixSystem = function(args) {
 
 
 
+var infoSystem = function(args) {
+  insight.track('system', 'info');
+
+  fetchSys(2, args);
+
+  var table = new cliTable({chars: tableChars, style: tableStyle,
+                            head: ['Name', 'Type', 'Parent', 'Info'], colWidths: [20, 20, 20, 50]});
+
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+  sdk.infoSystem(args._[0], args._[1], function(err, info) {
+    if (err) {
+      return quit(err);
+    }
+
+    _.each(info, function(inf) {
+      table.push([inf.name, inf.type, inf.parent, inf.info]);
+    });
+    console.log(table.toString());
+    quit();
+  });
+};
+
+
+
 var stopSystem = function(args) {
   insight.track('system', 'stop');
 
@@ -892,6 +916,7 @@ program.register('system analyze', connect.bind(null, analyzeSystem));
 program.register('system check', connect.bind(null, checkSystem));
 program.register('system fix', connect.bind(null, fixSystem));
 program.register('system stop', connect.bind(null, stopSystem));
+program.register('system info', connect.bind(null, infoSystem));
 program.register('system compile', connect.bind(null, compileSystem));
 program.register('system use', useSystem);
 
