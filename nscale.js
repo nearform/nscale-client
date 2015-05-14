@@ -28,14 +28,12 @@ var cfg = require('./lib/config');
 var fetcher = require('./lib/fetchSys')();
 var exec = require('child_process').exec;
 var async = require('async');
-var username = require('username');
 var chalk = require('chalk');
-var running = require('is-running');
 var serverController = require('./lib/serverController')();
-var portscanner = require('portscanner');
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
 var Insight = require('insight');
-
+var tmp = require('tmp');
+var editor = require('editor');
 var pkg = require('./package.json');
 
 var fetchSys = fetcher.fetchSys;
@@ -177,7 +175,7 @@ function connect(next, opts) {
 
 
 function showHelp() {
-  insight.track('help')
+  insight.track('help');
   var file = path.join(__dirname, './', 'docs', 'help.txt');
   process.stdout.write(fs.readFileSync(file));
   quit();
@@ -189,13 +187,14 @@ function version() {
     'nscale/package.json',
     'nscale/node_modules/nscale-kernel/package.json',
     './package.json',
-  ].forEach(function(p) {
+  ].forEach(function(file) {
     try {
-      var p = require(p);
+      var p = require(file);
       var tabs = '\t';
 
-      if (p.name.length < 8)
+      if (p.name.length < 8) {
         tabs += '\t';
+      }
 
       console.log(chalk.green(p.name), tabs, p.version);
     } catch(err) {
@@ -266,7 +265,7 @@ var fetchContainerSysRev = function(args) {
   }
 
   if (!sys) {
-    console.error('please specify a system')
+    console.error('please specify a system');
     quit();
     return;
   }
@@ -274,7 +273,7 @@ var fetchContainerSysRev = function(args) {
   return {
     sys: sys,
     revision: revision
-  }
+  };
 };
 
 var listContainers = function(args) {
@@ -364,27 +363,11 @@ var createSystem = function() {
 
     sdk.createSystem(results.name, results.namespace, process.cwd(), function(err, system) {
       if (!err && system && !system.id) {
-        err = new Error('No system id was returned')
+        err = new Error('No system id was returned');
       }
 
       quit(err);
     });
-  });
-};
-
-
-
-var cloneSystem = function(args) {
-  insight.track('system', 'clone');
-
-  sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.cloneSystem(args._[0], process.cwd(), function(err, response) {
-    if (err) {
-      return quit(err);
-    }
-
-    console.log(response.result);
-    quit();
   });
 };
 
@@ -410,25 +393,6 @@ var unlinkSystem = function(args) {
     quit(err);
   });
 };
-
-
-
-var syncSystem = function(args) {
-  insight.track('system', 'sync');
-
-  sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.syncSystem(args._[0], function(err, response) {
-    if (err) {
-      return quit(err);
-    }
-
-    console.log(response.result);
-    console.log(JSON.stringify(response, null, 2));
-    quit();
-  });
-};
-
-
 
 
 var buildContainer = function(args) {
@@ -537,7 +501,7 @@ var buildAllContainers = function(args) {
   }
 
   if (!sys) {
-    console.error('please specify a system')
+    console.error('please specify a system');
     quit();
     return;
   }
@@ -789,6 +753,65 @@ var infoSystem = function(args) {
 
 
 
+var compileSystem = function(args) {
+  insight.track('system', 'compile');
+
+  fetchSys(1, args);
+  var message = args.m || args.message || 'system compile';
+
+  sdk.ioHandlers(stdoutHandler, stderrHandler);
+  sdk.compileSystem(args._[0], message, quit);
+};
+
+
+
+var commitSystem = function(args) {
+  var commitMsg = '';
+  var first = true;
+  insight.track('system', 'commit');
+
+  fetchSys(1, args);
+  var message = args.m || args.message;
+
+  if (!message) {
+    tmp.file(function(err, path) {
+      fs.writeFileSync(path, '\n# Please enter the commit message for your changes. Lines starting\n# with "#" will be ignored, and an empty message aborts the commit.', 'utf8');
+      editor(path, function() {
+        message = fs.readFileSync(path, 'utf8');
+        _.each(message.split('\n'), function(line) {
+          if (line.charAt(0) !== '#') {
+            if (!first) {
+              commitMsg += '\n';
+            }
+            first = false;
+            commitMsg += line;
+          }
+        });
+        commitMsg = commitMsg.replace(/\n/g, ' ');
+        if (commitMsg.length > 3) {
+          commitMsg = '\'' + commitMsg + '\'';
+          sdk.ioHandlers(stdoutHandler, stderrHandler);
+          sdk.commitSystem(args._[0], commitMsg, function(err) {
+            quit(err);
+          });
+        }
+        else {
+          console.log('aborted!');
+          quit();
+        }
+      });
+    });
+  }
+  else {
+    sdk.ioHandlers(stdoutHandler, stderrHandler);
+    sdk.commitSystem(args._[0], message, function(err) {
+      quit(err);
+    });
+  }
+};
+
+
+
 var stopSystem = function(args) {
   insight.track('system', 'stop');
 
@@ -847,7 +870,7 @@ var useSystem = function(args) {
   quit();
 };
 
-function startServer(args) {
+function startServer() {
   insight.track('server', 'start');
   console.log('nscale servers starting..');
 
@@ -858,7 +881,7 @@ function startServer(args) {
   serverController.start(servers, quit);
 }
 
-function stopServer(args) {
+function stopServer() {
   insight.track('server', 'stop');
   console.log('nscale servers stopping..');
 
@@ -917,6 +940,7 @@ program.register('system check', connect.bind(null, checkSystem));
 program.register('system fix', connect.bind(null, fixSystem));
 program.register('system stop', connect.bind(null, stopSystem));
 program.register('system info', connect.bind(null, infoSystem));
+program.register('system commit', connect.bind(null, commitSystem));
 program.register('system compile', connect.bind(null, compileSystem));
 program.register('system use', useSystem);
 
@@ -960,7 +984,7 @@ function start(argv) {
     console.log('No matching command.');
     return showHelp();
   }
-};
+}
 
 module.exports = start;
 
