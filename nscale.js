@@ -32,7 +32,8 @@ var chalk = require('chalk');
 var serverController = require('./lib/serverController')();
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
 var Insight = require('insight');
-
+var tmp = require('tmp');
+var editor = require('editor');
 var pkg = require('./package.json');
 
 var fetchSys = fetcher.fetchSys;
@@ -752,21 +753,61 @@ var infoSystem = function(args) {
 
 
 
-var commitSystem = function(args) {
-  insight.track('system', 'check');
+var compileSystem = function(args) {
+  insight.track('system', 'compile');
 
-  fetchSys(2, args);
+  fetchSys(1, args);
+  var message = args.m || args.message || 'system compile';
+
   sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.fixSystem(args._[0], args._[1], function(err) {
-    if (err) {
-      return quit(err);
-    }
+  sdk.compileSystem(args._[0], message, quit);
+};
 
-    console.log();
-    console.log('Commit complete');
-    console.log();
-    quit();
-  });
+
+
+var commitSystem = function(args) {
+  var commitMsg = '';
+  var first = true;
+  insight.track('system', 'commit');
+
+  fetchSys(1, args);
+  var message = args.m || args.message;
+
+  if (!message) {
+    tmp.file(function(err, path) {
+      fs.writeFileSync(path, '\n# Please enter the commit message for your changes. Lines starting\n# with "#" will be ignored, and an empty message aborts the commit.', 'utf8');
+      editor(path, function() {
+        message = fs.readFileSync(path, 'utf8');
+        _.each(message.split('\n'), function(line) {
+          if (line.charAt(0) !== '#') {
+            if (!first) {
+              commitMsg += '\n';
+            }
+            first = false;
+            commitMsg += line;
+          }
+        });
+        commitMsg = commitMsg.replace(/\n/g, ' ');
+        if (commitMsg.length > 3) {
+          commitMsg = '\'' + commitMsg + '\'';
+          sdk.ioHandlers(stdoutHandler, stderrHandler);
+          sdk.commitSystem(args._[0], commitMsg, function(err) {
+            quit(err);
+          });
+        }
+        else {
+          console.log('aborted!');
+          quit();
+        }
+      });
+    });
+  }
+  else {
+    sdk.ioHandlers(stdoutHandler, stderrHandler);
+    sdk.commitSystem(args._[0], message, function(err) {
+      quit(err);
+    });
+  }
 };
 
 
