@@ -28,11 +28,8 @@ var cfg = require('./lib/config');
 var fetcher = require('./lib/fetchSys')();
 var exec = require('child_process').exec;
 var async = require('async');
-var username = require('username');
 var chalk = require('chalk');
-var running = require('is-running');
 var serverController = require('./lib/serverController')();
-var portscanner = require('portscanner');
 var nscaleRoot = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] + '/.nscale';
 var Insight = require('insight');
 
@@ -177,7 +174,7 @@ function connect(next, opts) {
 
 
 function showHelp() {
-  insight.track('help')
+  insight.track('help');
   var file = path.join(__dirname, './', 'docs', 'help.txt');
   process.stdout.write(fs.readFileSync(file));
   quit();
@@ -189,13 +186,14 @@ function version() {
     'nscale/package.json',
     'nscale/node_modules/nscale-kernel/package.json',
     './package.json',
-  ].forEach(function(p) {
+  ].forEach(function(file) {
     try {
-      var p = require(p);
+      var p = require(file);
       var tabs = '\t';
 
-      if (p.name.length < 8)
+      if (p.name.length < 8) {
         tabs += '\t';
+      }
 
       console.log(chalk.green(p.name), tabs, p.version);
     } catch(err) {
@@ -266,7 +264,7 @@ var fetchContainerSysRev = function(args) {
   }
 
   if (!sys) {
-    console.error('please specify a system')
+    console.error('please specify a system');
     quit();
     return;
   }
@@ -274,7 +272,7 @@ var fetchContainerSysRev = function(args) {
   return {
     sys: sys,
     revision: revision
-  }
+  };
 };
 
 var listContainers = function(args) {
@@ -364,27 +362,11 @@ var createSystem = function() {
 
     sdk.createSystem(results.name, results.namespace, process.cwd(), function(err, system) {
       if (!err && system && !system.id) {
-        err = new Error('No system id was returned')
+        err = new Error('No system id was returned');
       }
 
       quit(err);
     });
-  });
-};
-
-
-
-var cloneSystem = function(args) {
-  insight.track('system', 'clone');
-
-  sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.cloneSystem(args._[0], process.cwd(), function(err, response) {
-    if (err) {
-      return quit(err);
-    }
-
-    console.log(response.result);
-    quit();
   });
 };
 
@@ -410,25 +392,6 @@ var unlinkSystem = function(args) {
     quit(err);
   });
 };
-
-
-
-var syncSystem = function(args) {
-  insight.track('system', 'sync');
-
-  sdk.ioHandlers(stdoutHandler, stderrHandler);
-  sdk.syncSystem(args._[0], function(err, response) {
-    if (err) {
-      return quit(err);
-    }
-
-    console.log(response.result);
-    console.log(JSON.stringify(response, null, 2));
-    quit();
-  });
-};
-
-
 
 
 var buildContainer = function(args) {
@@ -537,7 +500,7 @@ var buildAllContainers = function(args) {
   }
 
   if (!sys) {
-    console.error('please specify a system')
+    console.error('please specify a system');
     quit();
     return;
   }
@@ -847,7 +810,7 @@ var useSystem = function(args) {
   quit();
 };
 
-function startServer(args) {
+function startServer() {
   insight.track('server', 'start');
   console.log('nscale servers starting..');
 
@@ -858,7 +821,7 @@ function startServer(args) {
   serverController.start(servers, quit);
 }
 
-function stopServer(args) {
+function stopServer() {
   insight.track('server', 'stop');
   console.log('nscale servers stopping..');
 
@@ -960,7 +923,7 @@ function start(argv) {
     console.log('No matching command.');
     return showHelp();
   }
-};
+}
 
 module.exports = start;
 
