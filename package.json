@@ -31,7 +31,7 @@
     "is-running": "^1.0.5",
     "lodash": "^2.4.1",
     "nearform-terminal-logo": "^1.1.0",
-    "nscale-sdk": "^0.17.0",
+    "nscale-sdk": "^0.17.1",
     "portscanner": "^1.0.0",
     "shell-quote": "^1.4.2",
     "tmp": "0.0.26",
