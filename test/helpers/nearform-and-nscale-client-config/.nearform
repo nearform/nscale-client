@@ -1,0 +1,10 @@
+{
+  "targets": {
+    "foo": {},
+    "wibble": {
+      "host": "wibble",
+      "port": 3223
+    }
+  },
+  "use": "wibble"
+}
