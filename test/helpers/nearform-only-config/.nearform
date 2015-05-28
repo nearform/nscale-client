@@ -1,0 +1,6 @@
+{
+  "targets": {
+    "foo": {}
+  },
+  "use": "foo"
+}
