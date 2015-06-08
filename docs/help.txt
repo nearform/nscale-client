@@ -26,7 +26,8 @@ system compile <sys>                    - run a compile of the system descriptio
                                           to generate a full system definition
 
 -[ container ]----------
-container list <sys>                    - list all containers in this system
+container list <rev>                    - list all containers in this system,
+                                          optionally by a git revision
 container build <sys> <con> [rev] [tar] - build a specific container at a given revision
                                           with default 'latest' and target 'alltargets'
 container buildall <sys> [rev] [tar]    - build all containers in this system at a
